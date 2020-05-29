@@ -1,2 +1,1 @@
-# tu-gamejam-vue
-For GameJam competition hosting - Vue rewrite!
+# TU Gamejam Vue Rewrite
