@@ -1,25 +1,46 @@
 <template>
   <div id="app">
-    <NavBar ref="nav"/>
+    <nav-bar ref="nav"/>
     <div class="app-content" @click="tuckNav">
-      <router-view></router-view>
+      <router-view @toast="toast($event)"></router-view>
     </div>
+    <toaster ref="toaster"/>
   </div>
 </template>
 
 <script>
 import NavBar from './components/NavBar.vue'
-
+import Toaster from './components/Toaster.vue';
 
 export default {
   name: 'App',
-  components: {
-    NavBar
+  components: { NavBar, Toaster },
+  data() {
+    return {
+      team: null
+    }
   },
   methods: {
     tuckNav() {
       this.$refs.nav.tucked = true;
+    },
+    toast(msg) {
+      this.$refs.toaster.toast(msg);
+    },
+    teamCookieExists() {
+      return (document.cookie.split(';').some(item => item.trim().startsWith("team=")));
     }
+  },
+  mounted() {
+    if (!this.teamCookieExists()) return;
+    fetch("http://localhost:4321/login.php", {credentials: "include"}).then(response => {
+      response.text().then(text => {
+        this.toast(text); //TODO: use other toast for error
+        if (response.status == 200) {
+          this.team = text;
+        }
+      });
+    });
   }
 }
 

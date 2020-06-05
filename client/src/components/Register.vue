@@ -1,7 +1,7 @@
 <template>
   <div class="col-fill">
     <page-header msg="Create Your Team">Register</page-header>
-    <register-form></register-form>
+    <register-form @toast="$emit('toast', $event)"></register-form>
   </div>
 </template>
 

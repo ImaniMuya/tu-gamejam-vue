@@ -45,7 +45,7 @@ export default {
   left: 0px; 
   background-color: var(--primcolor);
   transition: all .3s ease-in-out;
-  z-index: 1000000;
+  z-index: 99;
 }
 
 #navcol.tucked{

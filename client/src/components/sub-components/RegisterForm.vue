@@ -60,15 +60,15 @@ export default {
       const url = serverURL + "/register.php";
       this.postData(url, formData).then(resp => {
         console.log(resp);
-        //TODO: redirect
-        //TODO: toast?
-      }).catch( (err, status) => {
-        console.log(status);
+        this.$router.push({ name: 'Home'});
+        this.$emit("toast", "Team Created!")
+      }).catch( (err) => {
         this.errors.push(err);
-      })
+      }).finally(() => this.submitting = false);
     },
 
     postData(url, data) {
+      this.submitting = true;
       return new Promise( (resolve, reject) => {
         fetch(url, {
           method: 'POST',
