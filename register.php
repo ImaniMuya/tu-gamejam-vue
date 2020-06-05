@@ -1,22 +1,16 @@
 <?php
 
-function close() {
-  flush();
-  die();
-}
-
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   http_response_code(200);
-  close();
+  die();
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   http_response_code(422);
-  echo "Please send a POST!";
-  close();
+  die("Please send a POST!");
 }
 
 
@@ -25,37 +19,34 @@ $content = file_get_contents('php://input');
 $body = json_decode($content);
 
 
-include('db.php');
+include_once('./helper.inc');
+$conn = get_db_connection();
+
 header('Content-Type: application/json');
 
 // Validation
 
 if ($body->regCode != "nerds4christ") {
   http_response_code(400);
-  echo "Wrong registration code.";
-  close();
+  die("Wrong registration code.");
 }
 
 if (!$body->teamName) {
   http_response_code(400);
-  echo "Missing Team Name.";
-  close();
+  die("Missing Team Name.");
 }
 if (!$body->leaderName) {
   http_response_code(400);
-  echo "Missing Leader Name.";
-  close();
+  die("Missing Leader Name.");
 }
 if (!$body->email) {
   http_response_code(400);
-  echo "Missing email.";
-  close();
+  die("Missing email.");
 }
 
 if (empty(filter_var($body->email, FILTER_VALIDATE_EMAIL))) {
-  http_response_code(400);  
-  echo "Invalid email.";
-  close();
+  http_response_code(400);
+  die("Invalid email.");
 }
 
 $sql = "SELECT email FROM people";
@@ -64,9 +55,8 @@ $stmt->execute();
 $people = $stmt->fetchAll();
 foreach ($people as $key => $person) {
   if (strtoupper($person["email"]) == strtoupper($body->email)) {
-    http_response_code(400);  
-    echo "This email has already registered a team.";
-    close();
+    http_response_code(400);
+    die("This email has already registered a team");
   }
 }
 
@@ -78,8 +68,7 @@ $sql->bindParam(':name', $body->teamName);
 $sql->bindParam(':the_secret', $secret);
 if (!$sql->execute()) {
   http_response_code(500);
-  echo "Error Creating Team. Please try again :(";
-  close();
+  die("Error Creating Team. Please try again :(");
 }
 $team_id = $conn->lastInsertId();
 
@@ -90,16 +79,18 @@ $sql->bindParam(':email', $body->email);
 $sql->bindParam(':team_id', $team_id);
 if (!$sql->execute()) {
   http_response_code(500);
-  echo "Error Creating Leader. Please try again :(";
-  close();
-  // TODO: if failed delete team?
+  die("Error Creating Leader. Please try again :(");
+  // TODO: delete team here?
 }
 
-$msg = "You just created team: ".$teamName."! Click this link to sign in!".$loginURL."?team=".$team_id."&secret=".$secret;
+// Email
+
+$loginURL = "http/localhost:8080/login";
+$msg = "You just created team: ".$body->teamName."! Click this link to sign in!".$loginURL."?t=".$team_id."&s=".$secret;
 $msg = wordwrap($msg,70);
 mail($body->email,"TU GameJam Team Confirmation",$msg);
 
-echo "Team Created: $body->teamName.";
-http_response_code(201);
 
+http_response_code(201);
+die("Team Created: $body->teamName.");
 ?>
