@@ -2,7 +2,10 @@
   <div id="app">
     <nav-bar ref="nav"/>
     <div class="app-content" @click="tuckNav">
-      <router-view @toast="toast($event)"></router-view>
+      <router-view 
+        @toast="toast($event)"
+        @login="attemptLogin()"
+      ></router-view>
     </div>
     <toaster ref="toaster"/>
   </div>
@@ -27,20 +30,26 @@ export default {
     toast(msg) {
       this.$refs.toaster.toast(msg);
     },
-    teamCookieExists() {
-      return (document.cookie.split(';').some(item => item.trim().startsWith("team=")));
+    attemptLogin() {
+      if (!this.$teamCookieExists) return;
+      fetch("http://localhost:4321/login.php", {credentials: "include"}).then(response => {
+        response.text().then(text => {
+          if (response.status == 200) {
+            this.team = text;
+            this.toast("Logged into team: " + text);
+          } else {
+            document.cookie = `gjt= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+            document.cookie = `gjs= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+            this.toast(text); //TODO: use other toast for error
+          }
+        });
+      });
     }
   },
   mounted() {
-    if (!this.teamCookieExists()) return;
-    fetch("http://localhost:4321/login.php", {credentials: "include"}).then(response => {
-      response.text().then(text => {
-        this.toast(text); //TODO: use other toast for error
-        if (response.status == 200) {
-          this.team = text;
-        }
-      });
-    });
+    if (this.team == null && this.$teamCookieExists) {
+      this.attemptLogin();
+    }
   }
 }
 

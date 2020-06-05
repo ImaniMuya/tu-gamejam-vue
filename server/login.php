@@ -3,38 +3,25 @@ header('Access-Control-Allow-Origin: http://localhost:8080'); //TODO: make const
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 header('Access-Control-Allow-Credentials: true');
 
-$teamId = $_COOKIE['team'];
-$secret = $_COOKIE['secret'];
+$teamId = $_COOKIE['gjt'];
+$secret = $_COOKIE['gjs'];
 if (!$teamId || !$secret) {
   echo "Missing info.";
   flush();
   die();
 }
 
-include("./db.php");
+include_once("./helper.inc");
+$conn = get_db_connection();
+$team = get_login_team($conn, $teamId, $secret);
 
-$sql = $conn->prepare("SELECT name FROM teams
-        WHERE team_id = :teamId AND the_secret = :teamSecret");
-$sql->bindParam(':teamId', $teamId);
-$sql->bindParam(':teamSecret', $secret);
-if (!$sql->execute()) {
-  http_response_code(500);
-  echo "Failed while finding team.";
-  flush();
-  die();
-}
-
-$team = $sql->fetch();
 if (!$team) {
   http_response_code(403);
-  echo "Failed to login.";
+  die("Failed to login.");
   flush();
-  die();
 }
 
 http_response_code(200);
-echo $team["name"];
+die($team["name"]);
 flush();
-die();
-
 ?>

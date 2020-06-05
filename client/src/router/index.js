@@ -5,6 +5,7 @@ import Rules from '@/components/Rules'
 import Resources from '@/components/Resources'
 import Register from '@/components/Register'
 import Team from '@/components/Team'
+import Login from '@/components/Login'
 
 Vue.use(Router)
 
@@ -15,6 +16,11 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     },
     {
       path: '/rules',

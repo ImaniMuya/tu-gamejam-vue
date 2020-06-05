@@ -4,6 +4,9 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 
+Object.defineProperty(Vue.prototype, '$teamCookieExists', {
+  get: function()  {return document.cookie.split(';').some(item => item.trim().startsWith("gjt=")); }
+});
 
 new Vue({
   router,

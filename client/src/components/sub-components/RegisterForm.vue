@@ -59,9 +59,8 @@ export default {
       
       const url = serverURL + "/register.php";
       this.postData(url, formData).then(resp => {
-        console.log(resp);
         this.$router.push({ name: 'Home'});
-        this.$emit("toast", "Team Created!")
+        this.$emit("toast", resp)
       }).catch( (err) => {
         this.errors.push(err);
       }).finally(() => this.submitting = false);

@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ show }">{{ msg }}</div>
+  <div :class="{ show }" @click="handleClick()">{{ msg }}</div>
 </template>
 
 <script>
@@ -8,14 +8,27 @@ export default {
   data() {
     return {
       msg: "Default Snackbar Message!", 
-      show: false //TODO: different style for error/warn toasts
+      show: false, //TODO: different style for error/warn toasts
+      hideTimeout: null
     }
   },
   methods: {
+    handleClick() {
+      if (this.show) {
+        clearTimeout(this.hideTimeout);
+        this.show = false;
+      }
+    },
+
     toast(msg) {
       this.msg = msg;
       this.show = true;
-      setTimeout(() => this.show = false, 3000);
+      console.log(this.hideTimeout);
+      if (this.hideTimeout != null) clearTimeout(this.hideTimeout);
+      this.hideTimeout = setTimeout(() => {
+        this.show = false;
+        console.log("hide")
+      }, 3000);
     }
   }
 }
@@ -23,7 +36,7 @@ export default {
 
 <style scoped>
 div {
-  visibility: hidden;
+  /* visibility: hidden; */
   min-width: 250px;
   margin-left: -125px;
   background-color: #333;
@@ -34,33 +47,17 @@ div {
   position: fixed;
   z-index: 100;
   left: 50%;
-  bottom: 30px;
   font-size: 17px;
+
+  bottom: 0px;
+  opacity: 0;
+  transition: all 0.5s;
+
 }
 
 div.show {
-  visibility: visible;
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
-}
-
-@-webkit-keyframes fadein {
-  from {bottom: 0; opacity: 0;} 
-  to {bottom: 30px; opacity: 1;}
-}
-
-@keyframes fadein {
-  from {bottom: 0; opacity: 0;}
-  to {bottom: 30px; opacity: 1;}
-}
-
-@-webkit-keyframes fadeout {
-  from {bottom: 30px; opacity: 1;} 
-  to {bottom: 0; opacity: 0;}
-}
-
-@keyframes fadeout {
-  from {bottom: 30px; opacity: 1;}
-  to {bottom: 0; opacity: 0;}
+  cursor: pointer;
+  bottom: 30px;
+  opacity: 1;
 }
 </style>
