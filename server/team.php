@@ -1,5 +1,6 @@
 <?php
 header('Access-Control-Allow-Origin: http://localhost:8080'); //TODO: make constants file
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 header('Access-Control-Allow-Credentials: true');
 
@@ -56,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   //TODO: send email to new member
 
   die(json_encode(array(
-    "person_id" => $sql->lastInsertId(),
+    "person_id" => $conn->lastInsertId(),
     "person_name" => $body->name,
     "email" => $body->email
   )));
@@ -82,6 +83,21 @@ if ($_SERVER['REQUEST_METHOD'] == "PUT") {
     "person_name" => $body->name,
     "email" => $body->email
   )));
+}
+
+if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
+  $content = file_get_contents('php://input');
+  $body = json_decode($content);
+  $sql = $conn->prepare("DELETE FROM people WHERE person_id = :person_id AND team_id = :team_id");
+  $sql->bindParam(':person_id', $_GET["id"]);
+  $sql->bindParam(':team_id', $team["team_id"]);
+  if (!$sql->execute()) {
+    http_response_code(500);
+    die("Failed while deleting member.");
+  }
+
+  http_response_code(200);
+  die("Deleted.");
 }
 
 ?>

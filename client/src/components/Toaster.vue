@@ -23,11 +23,9 @@ export default {
     toast(msg) {
       this.msg = msg;
       this.show = true;
-      console.log(this.hideTimeout);
       if (this.hideTimeout != null) clearTimeout(this.hideTimeout);
       this.hideTimeout = setTimeout(() => {
         this.show = false;
-        console.log("hide")
       }, 3000);
     }
   }

@@ -5,6 +5,7 @@
       <router-view 
         @toast="toast($event)"
         @login="attemptLogin()"
+        :team="team"
       ></router-view>
     </div>
     <toaster ref="toaster"/>
