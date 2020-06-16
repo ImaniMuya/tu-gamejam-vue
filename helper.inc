@@ -1,5 +1,11 @@
 <?php
 
+function die_JSON($arr) {
+  header('Content-Type: application/json');
+  die(json_encode($arr));
+}
+
+
 function get_db_connection() { //TODO: would a try catch here help?
   $conn = new PDO('sqlite:./sql/current.db');
   return $conn;
@@ -16,6 +22,13 @@ function get_login_team($conn, $teamId, $secret) {
   }
   $team = $sql->fetch();
   return $team;
+}
+
+function send_team_email($email, $teamName, $teamId, $secret) {
+  $loginURL = "http/localhost:8080/login";
+  $msg = "You've been added to team: ".$teamName."! Click this link to sign in! ".$loginURL."?t=".$teamId."&s=".$secret;
+  $msg = wordwrap($msg, 70);
+  mail($email, "TU GameJam Team Confirmation", $msg);
 }
 
 ?>

@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
   }
   
   http_response_code(200);
-  die(json_encode($sql->fetchAll()));
+  die_JSON($sql->fetchAll());
 }
 
 // POST
@@ -52,39 +52,55 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     http_response_code(500);
     die("Failed while adding member.");
   }
-  http_response_code(200);
+  http_response_code(201);
   
-  //TODO: send email to new member
-
-  die(json_encode(array(
+  // send_team_email($body->email, $team["name"], $team["team_id"], $secret);
+  
+  die_JSON(array(
     "person_id" => $conn->lastInsertId(),
     "person_name" => $body->name,
     "email" => $body->email
-  )));
+  ));
 }
 
+// PUT
 if ($_SERVER['REQUEST_METHOD'] == "PUT") {
   $content = file_get_contents('php://input');
   $body = json_decode($content);
+  if ($body->name == "" && $body->email == "") {
+    http_response_code(400);
+    die("No member info to update.");
+  }
   
-  $sql = $conn->prepare("REPLACE INTO people (person_name, email, team_id)
-    VALUES (:person_name, :email, :team_id)");
+  $sql = "UPDATE people SET ";
+  if ($body->name != "") {
+    $sql .= "person_name = :person_name ";
+    if ($body->email != "") $sql .= ", ";
+  }
+  if ($body->email != "") $sql .= "email = :email ";
+  $sql .= "WHERE person_id=:person_id AND team_id=:team_id";
+
+  $sql = $conn->prepare($sql);
   $sql->bindParam(':person_id', $body->id);
-  $sql->bindParam(':person_name', $body->name);
-  $sql->bindParam(':email', $body->email);
+  if ($body->name != "") $sql->bindParam(':person_name', $body->name);
+  if ($body->email != "") $sql->bindParam(':email', $body->email);
   $sql->bindParam(':team_id', $team["team_id"]);
+
   if (!$sql->execute()) {
     http_response_code(500);
     die("Failed while updating member.");
   }
   http_response_code(200);
-  //TODO: send email to new member if email changed?? (need to get old value before replace)
-  die(json_encode(array(
+  if ($body->email != "") {
+    // send_team_email($body->email, $team["name"], $team["team_id"], $secret);
+  }
+  die_JSON(array(
     "person_name" => $body->name,
     "email" => $body->email
-  )));
+  ));
 }
 
+// DELETE
 if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
   $content = file_get_contents('php://input');
   $body = json_decode($content);
