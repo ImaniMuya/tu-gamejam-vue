@@ -1,31 +1,30 @@
 <template>
   <div>
     <page-header :msg="team">Team Members</page-header>
-    <loader class="page-loader" v-if="loading" :circlesNum="5"/>
+    <loader id="page-loader" v-if="loading" :circlesNum="5"/>
     <div v-else class="grid">
       <div class="grid-heading">Name</div>
       <div class="grid-heading">Email</div>
       <div class="grid-heading"></div>
       <template v-for="(person, index) in people">
-        <!-- TODO: loading spinner -->
         <template v-if="person.editing">
           <input type="text" :key="index + 'name'" v-model="person.name" :disabled="person.saving" maxlength="50" />
           <input type="text" :key="index + 'email'" v-model="person.email" :disabled="person.saving" maxlength="50" />
           <div :key="index + 'btns'" class="btn-container">
-            <loader v-if="person.saving" :key="index+'save'" :circlesNum="1" />
-            <img v-else :key="index + 'save'" class="icon" src="../assets/save.png" alt="Save" @click="saveEditClicked(person)" title="Save">
-            <loader v-if="person.saving" :key="index+'cancel'" :circlesNum="1" />
-            <img v-else :key="index + 'cancel'" class="icon" src="../assets/cancel.png" alt="Cancel" @click="cancelClicked(person)" title="Cancel">
+            <loader v-if="person.saving" :circlesNum="1" />
+            <img v-else class="icon" src="../assets/save.png" alt="Save" @click="save(person)" title="Save">
+            <loader v-if="person.saving" :circlesNum="1" />
+            <img v-else class="icon" src="../assets/cancel.png" alt="Cancel" @click="cancel(person)" title="Cancel">
           </div>
         </template>
         <template v-else>
           <div :key="index + 'name'">{{ person.name }}</div>
           <div :key="index + 'email'">{{ person.email }}</div>
           <div :key="index + 'btns'" class="btn-container">
-            <loader v-if="person.deleting" :key="index + 'edit'" :circlesNum="1"/>
-            <img v-else :key="index + 'edit'" class="icon" src="../assets/edit.png" alt="Edit" @click="editClicked(person)" title="Edit"/>
-            <loader v-if="person.deleting" :key="index + 'delete'" :circlesNum="1"/>
-            <img v-else :key="index + 'delete'" class="icon" src="../assets/delete.png" alt="Delete" @click="deleteClicked(person)" title="Remove"/>
+            <loader v-if="person.deleting" :circlesNum="1"/>
+            <img v-else class="icon" src="../assets/edit.png" alt="Edit" @click="edit(person)" title="Edit"/>
+            <loader v-if="person.deleting" :circlesNum="1"/>
+            <img v-else class="icon" src="../assets/delete.png" alt="Delete" @click="remove(person)" title="Remove"/>
           </div>
         </template>
       </template>
@@ -33,7 +32,7 @@
       <input type="text" placeholder="New Email" v-model="newPerson.email" :disabled="adding" maxlength="50" />
       <div class="btn-container">
         <loader v-if="adding" :circlesNum="1"/>
-        <img v-else class="icon" src="../assets/plus.png" alt="Add" title="Add New" @click="addClicked()">
+        <img v-else class="icon" src="../assets/plus.png" alt="Add" title="Add New" @click="addPerson()">
       </div>
 
     </div>
@@ -85,7 +84,8 @@ export default {
         deleting: false,
       }
     },
-    addClicked() {
+
+    addPerson() {
       this.newPerson.name = this.newPerson.name.trim();
       this.newPerson.email = this.newPerson.email.trim();
       if (!this.newPerson.name) {
@@ -112,7 +112,7 @@ export default {
       .finally(() => this.adding = false);
     },
 
-    deleteClicked(person) {
+    remove(person) {
       if (!confirm(`Remove ${person.name} from ${this.team}?`)) return;
       const id = person.id;
       person.deleting = true;
@@ -124,18 +124,18 @@ export default {
       .catch(err => this.$emit("warn", err))
       .finally(() => person.deleting = false)
     },
-    editClicked(person) {
+    edit(person) {
       person.editing = true;
       this.$set(person, "origName", person.name);
       this.$set(person, "origEmail", person.email);
     },
-    cancelClicked(person) {
+    cancel(person) {
       if (person.saving) return;
       person.editing = false;
       person.name = person.origName;
       person.email = person.origEmail;
     },
-    saveEditClicked(person) {
+    save(person) {
       const nameChange = person.name != person.origName;
       const emailChange = person.email != person.origEmail;
       if (!nameChange && !emailChange) {
@@ -202,7 +202,7 @@ export default {
   margin-left: 4px;
 }
 
-.page-loader {
+#page-loader {
   margin: 20px auto;
 }
 

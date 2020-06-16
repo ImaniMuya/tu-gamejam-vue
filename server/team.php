@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   ));
 }
 
-// PUT
+// PUT (this should technically be "PATCH")
 if ($_SERVER['REQUEST_METHOD'] == "PUT") {
   $content = file_get_contents('php://input');
   $body = json_decode($content);
@@ -102,8 +102,6 @@ if ($_SERVER['REQUEST_METHOD'] == "PUT") {
 
 // DELETE
 if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
-  $content = file_get_contents('php://input');
-  $body = json_decode($content);
   $sql = $conn->prepare("DELETE FROM people WHERE person_id = :person_id AND team_id = :team_id");
   $sql->bindParam(':person_id', $_GET["id"]);
   $sql->bindParam(':team_id', $team["team_id"]);
