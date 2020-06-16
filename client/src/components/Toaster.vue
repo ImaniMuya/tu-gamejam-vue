@@ -1,10 +1,14 @@
 <template>
-  <div :class="{ show }" @click="handleClick()">{{ msg }}</div>
+  <div :class="{ show, warn }" @click="handleClick()">
+    <img v-if="warn" src="../assets/warn.png" alt="Warning"/>
+    {{ msg }}
+  </div>
 </template>
 
 <script>
 export default {
   name: "Toaster",
+  props: { warn: Boolean },
   data() {
     return {
       msg: "Default Snackbar Message!", 
@@ -26,7 +30,7 @@ export default {
       if (this.hideTimeout != null) clearTimeout(this.hideTimeout);
       this.hideTimeout = setTimeout(() => {
         this.show = false;
-      }, 3000);
+      }, 10000);
     }
   }
 }
@@ -34,7 +38,7 @@ export default {
 
 <style scoped>
 div {
-  /* visibility: hidden; */
+  visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
   background-color: #333;
@@ -51,11 +55,24 @@ div {
   opacity: 0;
   transition: all 0.5s;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 div.show {
+  visibility: visible;
   cursor: pointer;
   bottom: 30px;
   opacity: 1;
+}
+
+div.warn {
+  background-color: var(--seccolor);
+}
+
+img { 
+  height: 1em;
+  margin-right: .25em;
 }
 </style>

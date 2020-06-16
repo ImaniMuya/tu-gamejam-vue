@@ -4,11 +4,12 @@
     <div class="app-content" @click="tuckNav">
       <router-view 
         @toast="toast($event)"
+        @warn="warn($event)"
         @login="attemptLogin()"
         :team="team"
       ></router-view>
     </div>
-    <toaster ref="toaster"/>
+    <toaster ref="toaster" :warn="warnToast"/>
   </div>
 </template>
 
@@ -21,7 +22,9 @@ export default {
   components: { NavBar, Toaster },
   data() {
     return {
-      team: null
+      team: null,
+      warnToast: false,
+      loginAttempted: false
     }
   },
   methods: {
@@ -29,11 +32,18 @@ export default {
       this.$refs.nav.tucked = true;
     },
     toast(msg) {
+      this.warnToast = false;
+      this.$refs.toaster.toast(msg);
+    },
+    warn(msg) {
+      this.warnToast = true;
       this.$refs.toaster.toast(msg);
     },
     attemptLogin() {
       if (!this.$teamCookieExists) return;
-      fetch("http://localhost:4321/login.php", {credentials: "include"}).then(response => {
+      this.loginAttempted = true;
+      fetch("http://localhost:4321/login.php", {credentials: "include"})
+      .then(response => {
         response.text().then(text => {
           if (response.status == 200) {
             this.team = text;
@@ -41,14 +51,14 @@ export default {
           } else {
             document.cookie = `gjt= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
             document.cookie = `gjs= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-            this.toast(text); //TODO: use other toast for error
+            this.warn(text); //TODO: use other toast for error
           }
         });
       });
     }
   },
   mounted() {
-    if (this.team == null && this.$teamCookieExists) {
+    if (this.team == null && this.$teamCookieExists && !this.loginAttempted) {
       this.attemptLogin();
     }
   }

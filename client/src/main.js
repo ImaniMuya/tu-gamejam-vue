@@ -5,10 +5,48 @@ import App from './App.vue'
 Vue.config.productionTip = false
 
 Object.defineProperty(Vue.prototype, '$teamCookieExists', {
-  get: function()  {return document.cookie.split(';').some(item => item.trim().startsWith("gjt=")); }
+  get: function() { return document.cookie.split(';').some(item => item.trim().startsWith("gjt=")); }
+});
+
+
+function standardResponseHandler(goodStatus) {
+  return response => {
+    if (response.status == goodStatus) {
+      if (response.headers.get("content-type") == "application/json") return response.json();
+      else return response.text();
+    }
+    if (response.status == 403) {
+      setTimeout(() => router.push({ name: 'Home'}), 0);
+    }
+    return response.text().then(x => { throw x });
+  }
+}
+
+Object.defineProperty(Vue.prototype, '$http', {
+  value: {
+    get(url, settings) {
+      return fetch(url, settings).then(standardResponseHandler(200));
+    },
+    post(url, settings, body) {
+      if (typeof body != "string") body = JSON.stringify(body);
+      settings.method = "POST";
+      settings.body = body;
+      return fetch(url, settings).then(standardResponseHandler(201));
+    },
+    put(url, settings, body) {
+      if (typeof body != "string") body = JSON.stringify(body);
+      settings.method = "PUT";
+      settings.body = body;
+      return fetch(url, settings).then(standardResponseHandler(200));
+    },
+    delete(url, settings) {
+      settings.method = "DELETE";
+      return fetch(url, settings).then(standardResponseHandler(200));
+    },
+  }
 });
 
 new Vue({
   router,
   render: h => h(App),
-}).$mount('#app')
+}).$mount("#app")

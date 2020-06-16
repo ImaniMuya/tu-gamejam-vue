@@ -22,8 +22,6 @@ $body = json_decode($content);
 include_once('./helper.inc');
 $conn = get_db_connection();
 
-header('Content-Type: application/json');
-
 // Validation
 
 if ($body->regCode != "nerds4christ") {
@@ -70,26 +68,20 @@ if (!$sql->execute()) {
   http_response_code(500);
   die("Error Creating Team. Please try again :(");
 }
-$team_id = $conn->lastInsertId();
+$teamId = $conn->lastInsertId();
 
 
 $sql = $conn->prepare("INSERT INTO people (person_name, email, team_id) VALUES (:person_name, :email, :team_id)");
 $sql->bindParam(':person_name', $body->leaderName);
 $sql->bindParam(':email', $body->email);
-$sql->bindParam(':team_id', $team_id);
+$sql->bindParam(':team_id', $teamId);
 if (!$sql->execute()) {
   http_response_code(500);
   die("Error Creating Leader. Please try again :(");
   // TODO: delete team here?
 }
 
-// Email
-
-$loginURL = "http/localhost:8080/login";
-$msg = "You just created team: ".$body->teamName."! Click this link to sign in!".$loginURL."?t=".$team_id."&s=".$secret;
-$msg = wordwrap($msg,70);
-mail($body->email,"TU GameJam Team Confirmation",$msg);
-
+// send_team_email($body->email, $body->teamName, $teamId, $secret);
 
 http_response_code(201);
 die("Team Created: $body->teamName.");

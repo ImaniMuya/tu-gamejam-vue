@@ -1,31 +1,40 @@
 <template>
   <div>
     <page-header :msg="team">Team Members</page-header>
-    <div class="grid">
+    <loader class="page-loader" v-if="loading" :circlesNum="5"/>
+    <div v-else class="grid">
       <div class="grid-heading">Name</div>
       <div class="grid-heading">Email</div>
-      <div class="grid-heading"></div>
       <div class="grid-heading"></div>
       <template v-for="(person, index) in people">
         <!-- TODO: loading spinner -->
         <template v-if="person.editing">
-          <input type="text" :key="index + 'name'" v-model="person.name" />
-          <input type="text" :key="index + 'email'" v-model="person.email" />
-          <img :key="index + 'save'" class="icon" src="../assets/plus.png" alt="Save" @click="person.editing = false" title="Save">
-          <img :key="index + 'cancel'" class="icon" src="../assets/plus.png" alt="Cancel" @click="person.editing = false" title="Cancel">
+          <input type="text" :key="index + 'name'" v-model="person.name" :disabled="person.saving" maxlength="50" />
+          <input type="text" :key="index + 'email'" v-model="person.email" :disabled="person.saving" maxlength="50" />
+          <div :key="index + 'btns'" class="btn-container">
+            <loader v-if="person.saving" :key="index+'save'" :circlesNum="1" />
+            <img v-else :key="index + 'save'" class="icon" src="../assets/save.png" alt="Save" @click="saveEditClicked(person)" title="Save">
+            <loader v-if="person.saving" :key="index+'cancel'" :circlesNum="1" />
+            <img v-else :key="index + 'cancel'" class="icon" src="../assets/cancel.png" alt="Cancel" @click="cancelClicked(person)" title="Cancel">
+          </div>
         </template>
         <template v-else>
           <div :key="index + 'name'">{{ person.name }}</div>
           <div :key="index + 'email'">{{ person.email }}</div>
-          <img :key="index + 'edit'" class="icon" src="../assets/edit.png" alt="Edit" @click="person.editing = true" title="Edit"/>
-          <loader v-if="person.deleting" :key="index + 'delete'" :circlesNum="1"/>
-          <img v-else :key="index + 'delete'" class="icon" src="../assets/delete.png" alt="Delete" @click="deleteClicked(person)" title="Delete"/>
+          <div :key="index + 'btns'" class="btn-container">
+            <loader v-if="person.deleting" :key="index + 'edit'" :circlesNum="1"/>
+            <img v-else :key="index + 'edit'" class="icon" src="../assets/edit.png" alt="Edit" @click="editClicked(person)" title="Edit"/>
+            <loader v-if="person.deleting" :key="index + 'delete'" :circlesNum="1"/>
+            <img v-else :key="index + 'delete'" class="icon" src="../assets/delete.png" alt="Delete" @click="deleteClicked(person)" title="Remove"/>
+          </div>
         </template>
       </template>
-      <div><input type="text" placeholder="New Name" v-model="newPerson.name"></div>
-      <div><input type="text" placeholder="New Email" v-model="newPerson.email"></div>
-      <loader v-if="adding" :circlesNum="1"/>
-      <img v-else class="icon" src="../assets/plus.png" alt="Add" title="Add New" @click="addClicked()">
+      <input type="text" placeholder="New Name" v-model="newPerson.name" :disabled="adding" maxlength="50" />
+      <input type="text" placeholder="New Email" v-model="newPerson.email" :disabled="adding" maxlength="50" />
+      <div class="btn-container">
+        <loader v-if="adding" :circlesNum="1"/>
+        <img v-else class="icon" src="../assets/plus.png" alt="Add" title="Add New" @click="addClicked()">
+      </div>
 
     </div>
   </div>
@@ -42,6 +51,7 @@ export default {
   data() {
     return {
       people: [],
+      loading: false,
       adding: false,
       newPerson: { name: "", email: "" }
     }
@@ -49,115 +59,118 @@ export default {
 
   created() { //TODO: should this be mounted?
     if (!this.$teamCookieExists) {
-      this.$emit("toast", "You need to login first.")
+      this.$emit("warn", "You need to login first.")
       this.$router.push({ name: 'Home'});
       return;
     }
 
-    fetch(serverURL+"/team.php", {credentials: "include"})
-    .then(response => new Promise((resolve, reject) => {
-        if (response.status == 200) {
-          response.json().then(x => resolve(x));
-          return;
-        }
-
-        response.text().then(x => reject(x));
-        if (response.status == 403) {
-          setTimeout(() => this.$router.push({ name: 'Home'}), 0);
-        }
-    }))
+    this.loading = true;
+    this.$http.get(serverURL+"/team.php", {credentials: "include"})
     .then(json => {
       json.forEach(person => {
-        //restructure object...
-        this.people.push({
-          id: person.person_id,
-          name: person.person_name,
-          email: person.email,
-          editing: false,
-          deleting: false,
-        })
+        this.people.push(this.createPerson(person));
       });
     })
-    .catch(text => this.$emit("toast", text)); //TODO: error toast
-
-    //api call to get team members (use cookie) catch bad cookie -> redirect home
-
-    window.vm = this; //TODO: remove me
+    .catch(text => this.$emit("warn", text))
+    .finally(() => this.loading = false);
   },
   methods: {
+    createPerson(dbPerson) {
+      return {
+        id: dbPerson.person_id,
+        name: dbPerson.person_name,
+        email: dbPerson.email,
+        editing: false,
+        saving: false,
+        deleting: false,
+      }
+    },
     addClicked() {
       this.newPerson.name = this.newPerson.name.trim();
       this.newPerson.email = this.newPerson.email.trim();
       if (!this.newPerson.name) {
-        this.$emit("toast", "New person name missing."); //TODO: error toast
+        this.$emit("warn", "New person name missing.");
         return;
       }
       if (!this.newPerson.email) {
-        this.$emit("toast", "New person email missing."); //TODO: error toast
+        this.$emit("warn", "New person email missing.");
         return;
       }
       else if (!emailRE.test(this.newPerson.email.toLowerCase())) {
-        this.$emit("toast", "New person email is invalid."); //TODO: error toast
+        this.$emit("warn", "New person email is invalid.");
         return;
       }
 
       this.adding = true;
-      fetch(serverURL + "/team.php", {
-        credentials: "include",
-        method: "POST",
-        body: JSON.stringify(this.newPerson)
-      })
-      .then(response => new Promise((resolve, reject) => {
-          if (response.status == 200) {
-            response.json().then(x => resolve(x));
-            return;
-          }
-
-          response.text().then(x => reject(x));
-          if (response.status == 403) {
-            setTimeout(() => this.$router.push({ name: 'Home'}), 0);
-          }
-      }))
+      this.$http.post(serverURL + "/team.php", {credentials: "include"}, this.newPerson)
       .then(person => {
         this.newPerson.email = "";
         this.newPerson.name = "";
-        this.people.push({
-          id: person.person_id,
-          name: person.person_name,
-          email: person.email,
-          editing: false,
-          deleting: false,
-        })
+        this.people.push(this.createPerson(person));
       })
-      .catch(err => this.$emit("toast", err)) //TODO: error toast
+      .catch(err => this.$emit("warn", err))
       .finally(() => this.adding = false);
     },
 
     deleteClicked(person) {
+      if (!confirm(`Remove ${person.name} from ${this.team}?`)) return;
       const id = person.id;
       person.deleting = true;
-      fetch(serverURL + "/team.php?id=" + id, {
-        credentials: "include",
-        method: "DELETE",
-      })
-      .then(response => new Promise((resolve, reject) => {
-        if (response.status == 200) {
-          response.text().then(x => resolve(x));
-          return;
-        }
-
-        response.text().then(x => reject(x));
-        if (response.status == 403) {
-          setTimeout(() => this.$router.push({ name: 'Home'}), 0);
-        }
-      }))
+      this.$http.delete(serverURL + "/team.php?id=" + id, {credentials: "include"})
       .then(text => {
         this.$emit("toast", text);
         this.people = this.people.filter(x => x.id != id);
       })
-      .catch(err => this.$emit("toast", err))  //TODO: error toast
+      .catch(err => this.$emit("warn", err))
       .finally(() => person.deleting = false)
-    }
+    },
+    editClicked(person) {
+      person.editing = true;
+      this.$set(person, "origName", person.name);
+      this.$set(person, "origEmail", person.email);
+    },
+    cancelClicked(person) {
+      if (person.saving) return;
+      person.editing = false;
+      person.name = person.origName;
+      person.email = person.origEmail;
+    },
+    saveEditClicked(person) {
+      const nameChange = person.name != person.origName;
+      const emailChange = person.email != person.origEmail;
+      if (!nameChange && !emailChange) {
+        person.editing = false;
+        return;
+      }
+      if (!person.name) {
+        this.$emit("warn", "Name missing.");
+        return;
+      }
+      if (!person.email) {
+        this.$emit("warn", "Email missing.");
+        return;
+      }
+      else if (!emailRE.test(person.email.toLowerCase())) {
+        this.$emit("warn", "Email is invalid.");
+        return;
+      }
+
+      person.saving = true;
+      this.$http.put(serverURL + "/team.php", {credentials: "include"}, {
+        id: person.id,
+        name: nameChange ? person.name : "",
+        email: emailChange ? person.email: ""
+      })
+      .then(dbPerson => {
+        if (nameChange) person.name = dbPerson.person_name;
+        if (emailChange) person.email = dbPerson.email;
+        person.editing = false;
+      })
+      .catch(err => {
+        this.$emit("warn", err);
+      })
+      .finally(() => person.saving = false)
+    },
   }
 
 }
@@ -165,18 +178,49 @@ export default {
 <style scoped>
 .grid {
   display: grid;
-  grid-template-columns: auto auto min-content min-content;
-  gap: 10px 10px;
-  margin: 0 20px;
+  grid-template-columns: auto auto max-content;
+  gap: 10px 5px;
+  margin: 15px 20px;
   align-items: center;
 }
+
 .grid-heading {
   font-weight: bold;
+}
+
+.grid > div {
+  max-width: 350px;
+  overflow-wrap: break-word;
 }
 
 .icon {
   width: 24px;
   cursor: pointer;
 }
+
+.icon + .icon {
+  margin-left: 4px;
+}
+
+.page-loader {
+  margin: 20px auto;
+}
+
+.btn-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+@media screen and (max-width: 500px) {
+  .grid {
+    grid-template-columns: auto;
+  }
+  .grid-heading {
+    display: none;
+  }
+}
+
 
 </style>

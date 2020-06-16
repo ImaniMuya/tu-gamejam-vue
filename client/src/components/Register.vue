@@ -10,7 +10,8 @@ import PageHeader from './sub-components/PageHeader.vue';
 import RegisterForm from './sub-components/RegisterForm.vue';
 export default {
   name: "Register",
-  components: { PageHeader, RegisterForm }
+  components: { PageHeader, RegisterForm },
+  //TODO: redirect if already logged in?
 }
 </script>
 

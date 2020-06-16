@@ -57,30 +57,14 @@ export default {
         email: this.email
       };
       
-      const url = serverURL + "/register.php";
-      this.postData(url, formData).then(resp => {
+      this.$http.post(serverURL + "/register.php", {}, formData)
+      .then(resp => {
         this.$router.push({ name: 'Home'});
         this.$emit("toast", resp)
-      }).catch( (err) => {
-        this.errors.push(err);
-      }).finally(() => this.submitting = false);
+      })
+      .catch(err => this.errors.push(err))
+      .finally(() => this.submitting = false);
     },
-
-    postData(url, data) {
-      this.submitting = true;
-      return new Promise( (resolve, reject) => {
-        fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        }).then( response => {
-          if (response.status == 201) response.text().then(text => resolve(text));
-          else response.text().then(text => reject(text, response.status));
-        });
-      });
-    }
   },
 };
 </script>
