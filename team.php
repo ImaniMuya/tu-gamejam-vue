@@ -28,7 +28,7 @@ if (!$team) {
 // GET
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
   $sql = $conn->prepare("SELECT * FROM people WHERE team_id = :teamId");
-  $sql->bindParam(':teamId', $team["team_id"]);
+  $sql->bindValue(':teamId', $team["team_id"]);
   if (!$sql->execute()) {
     http_response_code(500);
     die("Failed while finding people.");
@@ -42,12 +42,21 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
   $content = file_get_contents('php://input');
   $body = json_decode($content);
+
+  if (empty(filter_var($body->email, FILTER_VALIDATE_EMAIL))) {
+    http_response_code(400);
+    die("Invalid email.");
+  }
+
+  if ($body->name == "") {
+    die("Missing name.");
+  }
   
   $sql = $conn->prepare("INSERT INTO people (person_name, email, team_id)
   VALUES (:person_name, :email, :team_id)");
-  $sql->bindParam(':person_name', $body->name);
-  $sql->bindParam(':email', $body->email);
-  $sql->bindParam(':team_id', $team["team_id"]);
+  $sql->bindValue(':person_name', $body->name);
+  $sql->bindValue(':email', $body->email);
+  $sql->bindValue(':team_id', $team["team_id"]);
   if (!$sql->execute()) {
     http_response_code(500);
     die("Failed while adding member.");
@@ -80,11 +89,16 @@ if ($_SERVER['REQUEST_METHOD'] == "PUT") {
   if ($body->email != "") $sql .= "email = :email ";
   $sql .= "WHERE person_id=:person_id AND team_id=:team_id";
 
+  if ($body->email != "" && empty(filter_var($body->email, FILTER_VALIDATE_EMAIL))) {
+    http_response_code(400);
+    die("Invalid email.");
+  }
+
   $sql = $conn->prepare($sql);
-  $sql->bindParam(':person_id', $body->id);
-  if ($body->name != "") $sql->bindParam(':person_name', $body->name);
-  if ($body->email != "") $sql->bindParam(':email', $body->email);
-  $sql->bindParam(':team_id', $team["team_id"]);
+  $sql->bindValue(':person_id', $body->id);
+  if ($body->name != "") $sql->bindValue(':person_name', $body->name);
+  if ($body->email != "") $sql->bindValue(':email', $body->email);
+  $sql->bindValue(':team_id', $team["team_id"]);
 
   if (!$sql->execute()) {
     http_response_code(500);
@@ -103,15 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] == "PUT") {
 // DELETE
 if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
   $sql = $conn->prepare("DELETE FROM people WHERE person_id = :person_id AND team_id = :team_id");
-  $sql->bindParam(':person_id', $_GET["id"]);
-  $sql->bindParam(':team_id', $team["team_id"]);
+  $sql->bindValue(':person_id', $_GET["id"]);
+  $sql->bindValue(':team_id', $team["team_id"]);
   if (!$sql->execute()) {
     http_response_code(500);
-    die("Failed while deleting member.");
+    die("Failed while removing member.");
   }
 
   http_response_code(200);
-  die("Deleted.");
+  die("Removed.");
 }
 
 ?>
