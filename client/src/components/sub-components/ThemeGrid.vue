@@ -51,8 +51,6 @@ export default {
     }
   },
   created() {
-    window.vm = this;
-
     this.loadingThemes = true;
     this.$http.get(serverURL + "/theme.php")
     .then(json => json.forEach(x => this.themes.push(this.createTheme(x))))

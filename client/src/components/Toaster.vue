@@ -1,19 +1,29 @@
 <template>
-  <div :class="{ show, warn }" @click="handleClick()">
-    <img v-if="warn" src="../assets/warn.png" alt="Warning"/>
-    {{ msg }}
-  </div>
+  <transition name="fade" :duration="500">
+    <div v-if="show" :class="{ show, warn }" :style="toastStyleVars" @click="handleClick()">
+      <img v-if="warn" src="../assets/warn.png" alt="Warning"/>
+      {{ msg }}
+    </div>
+  </transition>
 </template>
 
 <script>
 export default {
   name: "Toaster",
-  props: { warn: Boolean },
   data() {
     return {
       msg: "Default Snackbar Message!", 
       show: false, //TODO: different style for error/warn toasts
-      hideTimeout: null
+      hideTimeout: null,
+      duration: 0,
+      warn: false
+    }
+  },
+  computed: {
+    toastStyleVars() {
+      return {
+        '--duration': this.duration > 0 ? this.duration/1000 + 's' : "0s"
+      }
     }
   },
   methods: {
@@ -23,14 +33,23 @@ export default {
         this.show = false;
       }
     },
-
-    toast(msg) {
+    warnToast(msg, duration) {
+      this.warn = true;
+      this.showMsg(msg, duration);
+    },
+    toast(msg, duration) {
+      this.warn = false;
+      this.showMsg(msg, duration);
+    },
+    showMsg(msg, duration) {
       this.msg = msg;
-      this.show = true;
-      if (this.hideTimeout != null) clearTimeout(this.hideTimeout);
-      this.hideTimeout = setTimeout(() => {
-        this.show = false;
-      }, 10000);
+      this.duration = duration
+      this.show = false;
+      setTimeout(() => this.show = true, 0); // retrigger animation
+      if (duration > 0) { //non-positive duration -> last until closed or replaced
+        if (this.hideTimeout != null) clearTimeout(this.hideTimeout);
+        this.hideTimeout = setTimeout(() => this.show = false, this.duration);
+      }
     }
   }
 }
@@ -38,9 +57,7 @@ export default {
 
 <style scoped>
 div {
-  visibility: hidden;
   min-width: 250px;
-  margin-left: -125px;
   background-color: #333;
   color: #fff;
   text-align: center;
@@ -48,30 +65,48 @@ div {
   padding: 16px;
   position: fixed;
   z-index: 100;
-  left: 50%;
+  right: 20px;
   font-size: 17px;
-
-  bottom: 0px;
-  opacity: 0;
-  transition: all 0.5s;
 
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 4px 4px var(--quadcolor);
+  cursor: pointer;
+
+  opacity: 1;
+  bottom: 20px;
+  transition: all .5s;
 }
 
-div.show {
-  visibility: visible;
-  cursor: pointer;
-  bottom: 30px;
-  opacity: 1;
+.fade-enter, .fade-leave-to { /* hidden */
+  opacity: 0;
+  bottom: 0px;
 }
 
 div.warn {
   background-color: var(--seccolor);
 }
 
-img { 
+div::after {
+  content: '\A';
+  position: absolute;
+  background: white;
+  top: 0; left: 0; 
+  height: 4px;
+  opacity: 50%;
+  transition: width var(--duration) ease;
+  width: 100%;
+}
+div.fade-enter::after {
+  width: 0%;
+}
+
+div.leave-active::after {
+  width: 100%;
+}
+
+img {
   height: 1em;
   margin-right: .25em;
 }

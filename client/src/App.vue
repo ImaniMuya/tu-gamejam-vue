@@ -3,13 +3,13 @@
     <nav-bar ref="nav"/>
     <div class="app-content" @click="tuckNav">
       <router-view 
-        @toast="toast($event)"
-        @warn="warn($event)"
+        @toast="toast"
+        @warn="warn"
         @login="attemptLogin()"
         :team="team"
       ></router-view>
     </div>
-    <toaster ref="toaster" :warn="warnToast"/>
+    <toaster ref="toaster" />
   </div>
 </template>
 
@@ -31,13 +31,11 @@ export default {
     tuckNav() {
       this.$refs.nav.tucked = true;
     },
-    toast(msg) {
-      this.warnToast = false;
-      this.$refs.toaster.toast(msg);
+    toast(msg, duration=3000) {
+      this.$refs.toaster.toast(msg, duration)
     },
-    warn(msg) {
-      this.warnToast = true;
-      this.$refs.toaster.toast(msg);
+    warn(msg, duration=3000) {
+      this.$refs.toaster.warnToast(msg, duration)
     },
     attemptLogin() {
       if (!this.$teamCookieExists) return;
@@ -51,7 +49,7 @@ export default {
           } else {
             document.cookie = `gjt= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
             document.cookie = `gjs= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-            this.warn(text); //TODO: use other toast for error
+            this.warn(text);
           }
         });
       });
@@ -125,5 +123,4 @@ input[type=text] {
   padding: 5px;
   max-width: 250px;
 }
-
 </style>

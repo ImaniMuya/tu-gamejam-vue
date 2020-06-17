@@ -7,7 +7,7 @@ CREATE TABLE teams (
 
 DROP TABLE IF EXISTS people;
 CREATE TABLE people (
-    person_id INTEGER PRIMARY KEY,
+    person_id INTEGER PRIMARY KEY AUTOINCREMENT,
     person_name TEXT NOT NULL,
     email TEXT,
     team_id INTEGER,
@@ -18,20 +18,17 @@ CREATE TABLE people (
 
 DROP TABLE IF EXISTS votes;
 CREATE TABLE votes (
-    team_id INTEGER PRIMARY KEY,
-    theme1_id INTEGER,
-    theme2_id INTEGER,
-    theme3_id INTEGER,
-    theme4_id INTEGER,
-    theme5_id INTEGER,
-    FOREIGN KEY(team_id) REFERENCES teams(team_id)
-    --    ON UPDATE CASCADE
-    --    ON DELETE SET NULL
+    team_id INTEGER NOT NULL,
+    theme_id INTEGER NOT NULL,
+    ranking INTEGER NOT NULL,
+    FOREIGN KEY(team_id) REFERENCES teams(team_id),
+    FOREIGN KEY(theme_id) REFERENCES themes(theme_id),
+    PRIMARY KEY(team_id, ranking)
 );
 
 DROP TABLE IF EXISTS themes;
 CREATE TABLE themes (
-    theme_id INTEGER PRIMARY KEY,
+    theme_id INTEGER PRIMARY KEY AUTOINCREMENT,
     theme TEXT
 );
 

@@ -62,8 +62,8 @@ foreach ($people as $key => $person) {
 
 $secret = mt_rand(); //TODO: ensure random is unique
 $sql = $conn->prepare("INSERT INTO teams (name, the_secret) VALUES (:name, :the_secret)");
-$sql->bindParam(':name', $body->teamName);
-$sql->bindParam(':the_secret', $secret);
+$sql->bindValue(':name', $body->teamName);
+$sql->bindValue(':the_secret', $secret);
 if (!$sql->execute()) {
   http_response_code(500);
   die("Error Creating Team. Please try again :(");
@@ -72,9 +72,9 @@ $teamId = $conn->lastInsertId();
 
 
 $sql = $conn->prepare("INSERT INTO people (person_name, email, team_id) VALUES (:person_name, :email, :team_id)");
-$sql->bindParam(':person_name', $body->leaderName);
-$sql->bindParam(':email', $body->email);
-$sql->bindParam(':team_id', $teamId);
+$sql->bindValue(':person_name', $body->leaderName);
+$sql->bindValue(':email', $body->email);
+$sql->bindValue(':team_id', $teamId);
 if (!$sql->execute()) {
   http_response_code(500);
   die("Error Creating Leader. Please try again :(");
