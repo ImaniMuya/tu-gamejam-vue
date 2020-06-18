@@ -32,11 +32,18 @@ CREATE TABLE themes (
     theme TEXT
 );
 
+DROP TABLE IF EXISTS subm_categories;
+CREATE TABLE subm_categories (
+    category_id INTEGER PRIMARY KEY,
+    category_name TEXT
+);
+
 DROP TABLE IF EXISTS subm_questions;
 CREATE TABLE subm_questions (
     question_id INTEGER PRIMARY KEY,
     question TEXT,
-    question_type TEXT -- maybe replace with category later
+    question_category INTEGER,
+    FOREIGN KEY(question_category) REFERENCES subm_categories(category_id)
 );
 
 DROP TABLE IF EXISTS subm_answers;
@@ -49,6 +56,9 @@ CREATE TABLE subm_answers (
     FOREIGN KEY(team_id) REFERENCES teams(team_id)
 );
 
+INSERT INTO teams (name, the_secret)
+VALUES ("ed", 1234);
+
 INSERT INTO themes (theme) 
 VALUES
 ("Diverge/Diversion"),
@@ -57,13 +67,21 @@ VALUES
 ("3 Rules"),
 ("Night is Coming");
 
--- INSERT INTO subm_questions (question, question_type) 
--- VALUES
--- ("Name", "text"),
--- ("Main Picture", "image"),
--- ("Picture 1", "image"),
--- ("Picture 2", "image"),
--- ("Description", "textarea"),
--- ("How To Play", "textarea"),
--- ("Submission zip", "file"),
--- ("Game URL", "text");
+INSERT INTO subm_categories (category_id, category_name) 
+VALUES
+(1, "text"),
+(2, "textarea"),
+(3, "image"),
+(4, "file");
+
+
+INSERT INTO subm_questions (question, question_category) 
+VALUES
+("Name", 1),
+("Description", 2),
+("How To Play", 2),
+("Game URL", 1),
+("Main Picture", 3),
+("Picture 1", 3),
+("Picture 2", 3),
+("Submission zip", 4);
