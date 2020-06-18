@@ -7,7 +7,9 @@ import Register from '@/components/Register'
 import Team from '@/components/Team'
 import Vote from '@/components/Vote'
 import Admin from '@/components/Admin'
+import Submission from '@/components/Submission'
 import Login from '@/components/Login'
+import NotFound from '@/components/NotFound'
 
 Vue.use(Router)
 //TODO: check cookie in router.beforeEach?
@@ -50,9 +52,19 @@ export default new Router({
       component: Vote
     },
     {
+      path: '/submission',
+      name: 'Submission',
+      component: Submission
+    },
+    {
       path: '/admin',
       name: 'Admin',
       component: Admin
+    },
+    {
+      path: '*',
+      name: '404',
+      component: NotFound
     }
   ]
 })

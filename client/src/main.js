@@ -16,6 +16,7 @@ function standardResponseHandler(goodStatus) {
       else return response.text();
     }
     if (response.status == 403) {
+      sessionStorage.removeItem("team");
       setTimeout(() => router.push({ name: 'Home'}), 0);
     }
     return response.text().then(x => { throw x });

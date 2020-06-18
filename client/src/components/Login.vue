@@ -5,11 +5,6 @@
 <script>
 export default {
   name: "Login",
-  data() {
-    return {
-      message: "asdf"
-    }
-  },
   methods: {
     getFutureTimestamp(days) {
       days = days || 1;
@@ -20,17 +15,17 @@ export default {
   },
 
   created() {
-    const team = this.$route.query.t;
+    const teamId = this.$route.query.t;
     const secret = this.$route.query.s;
 
     this.message = "Attempting Login...";
     this.$router.push({ name: 'Home'});
-    if (team == null || secret == null) {
+    if (teamId == null || secret == null) {
       this.$emit("toast", "Please use the emailed link to log in.");
       return;
     }
 
-    document.cookie = `gjt=${team}; expires=${this.getFutureTimestamp(3)}`;
+    document.cookie = `gjt=${teamId}; expires=${this.getFutureTimestamp(3)}`;
     document.cookie = `gjs=${secret}; expires=${this.getFutureTimestamp(3)}`;
     this.$emit("login");
   }

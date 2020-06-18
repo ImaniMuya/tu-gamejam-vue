@@ -3,8 +3,10 @@
     <page-header msg="Cast Your Vote!">Theme Voting</page-header>
     <loader id="page-loader" v-if="loading" :circlesNum="5"/>
     <div v-else-if="submitting">
-      <div v-for="theme in themes" :key="theme.id" class="preview">
-        {{ theme.name }}
+      <div class="preview">
+        <div v-for="theme in themes" :key="theme.id">
+          {{ theme.name }}
+        </div>
       </div>
       <loader id="page-loader" :circlesNum="3"/>
     </div>
@@ -12,10 +14,13 @@
       <ul id="choices" ref="choices">
         <li v-for="(theme, index) in themes"
           :key="theme.id"
+          draggable="true"
+          :style="extraStyle"
           :class="['choice', {over: dropSpot == index}, {ghost: index == heldThemeIdx}]"
           @dragstart="handleDragStart($event, index)"
           @dragover="handleDragOver($event, index)"
           @dragend="handleDragEnd()"
+          @drop.prevent
           :value="theme.id"
         >
           {{ theme.name }}
@@ -64,7 +69,13 @@ export default {
     .catch(err => this.$emit("warn", err))
     .finally(() => this.loading = false);
   },
-
+  computed: {
+    extraStyle() {
+      return {
+        '--margin-duration': this.heldThemeIdx == null ? "0s" : ".3s"
+      }
+    }
+  },
   methods: {
     createThemeEntry(theme) {
       return {
@@ -76,6 +87,7 @@ export default {
     handleDragStart(e, index) {
       this.heldThemeIdx = index;
       e.target.classList.add('ghost');
+      e.dataTransfer.setData('text/html', index);
     },
     handleDragOver(e, index) {
       if (e.preventDefault) e.preventDefault(); // Allows us to drop.
@@ -118,28 +130,30 @@ export default {
   display: flex;
   flex-flow: column;
   align-items: center;
+  position: relative;
 }
 
 .choice {
-  display: block;
-  width: 250px;
-  padding: 5px;
-  background-color: #ccc;
-  text-align: center;
   cursor: grab;
-  border-radius: 10px;
-  border: 2px solid var(--tercolor);
-  transition: all .2s ease-in-out;
-  font-size: 23px;
-  overflow-wrap: break-word;
-
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
   user-select: none;
   -khtml-user-drag: element;
   -webkit-user-drag: element;
-
+  
+  display: block;
+  box-sizing: border-box;
+  min-height: 40px;
+  width: 250px;
+  padding: 5px;
+  background-color: #ccc;
+  text-align: center;
+  border-radius: 10px;
+  margin: 2px;
+  font-size: 23px;
+  overflow-wrap: break-word;
+  transition: margin var(--margin-duration), opacity .1s;
 }
 
 .choice:hover {
@@ -147,13 +161,17 @@ export default {
 }
 
 .choice.ghost {
-  opacity: 0.4;
+  opacity: 0;
+  margin-bottom: -42px;
+}
+
+.choice.over {
+  margin-top: 44px;
 }
 
 .over {
   border-top: 2px solid var(--primcolor) !important;
 }
-
 
 #dummyChoice {
   display: block;
@@ -164,8 +182,6 @@ export default {
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
-  -khtml-user-drag: element;
-  -webkit-user-drag: element;
   user-select: none;
 }
 
@@ -185,8 +201,20 @@ button:hover {
 }
 
 .preview {
-  margin: 5px auto;
+  margin: 16px auto;
   text-align: center;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
 }
 
+.preview > div {
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 5px;
+  width: 250px;
+  margin: 2px;
+  font-size: 23px;
+  overflow-wrap: break-word;
+}
 </style>

@@ -16,7 +16,7 @@ $conn = get_db_connection();
 $team = get_login_team($conn, $teamId, $secret);
 
 if (!$team) {
-  http_response_code(403);
+  http_response_code(400);
   die("Failed to login.");
   flush();
 }

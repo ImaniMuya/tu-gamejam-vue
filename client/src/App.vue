@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <nav-bar ref="nav"/>
+    <nav-bar ref="nav" :team="team" />
     <div class="app-content" @click="tuckNav">
       <router-view 
         @toast="toast"
@@ -16,6 +16,7 @@
 <script>
 import NavBar from './components/NavBar.vue'
 import Toaster from './components/Toaster.vue';
+import { serverURL } from "./constants";
 
 export default {
   name: 'App',
@@ -40,22 +41,23 @@ export default {
     attemptLogin() {
       if (!this.$teamCookieExists) return;
       this.loginAttempted = true;
-      fetch("http://localhost:4321/login.php", {credentials: "include"})
-      .then(response => {
-        response.text().then(text => {
-          if (response.status == 200) {
-            this.team = text;
-            this.toast("Logged into team: " + text);
-          } else {
-            document.cookie = `gjt= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-            document.cookie = `gjs= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-            this.warn(text);
-          }
-        });
+      this.$http.get(serverURL + "/login.php", {credentials: "include"})
+      .then(text => {
+        this.team = text;
+        sessionStorage.setItem("team", text);
+        this.toast("Logged into team: " + text);
+      })
+      .catch(err => {
+        document.cookie = `gjt= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        document.cookie = `gjs= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        sessionStorage.removeItem("team");
+        this.warn(err);
       });
     }
   },
   mounted() {
+    if (this.team) return;
+    this.team = sessionStorage.getItem("team");
     if (this.team == null && this.$teamCookieExists && !this.loginAttempted) {
       this.attemptLogin();
     }

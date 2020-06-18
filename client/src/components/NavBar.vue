@@ -6,9 +6,22 @@
       </div>
     </div>
   <div class="navlinkcont">
-    <span class="navlink" v-for="(name, index) in links" :key="index">
-      <span @click="tucked = true"><router-link :to="{ name }">{{name}}</router-link></span>
+    <span class="navlink" v-for="(name, index) in links" :key="index" @click="tucked = true">
+      <router-link :to="{ name }">{{name}}</router-link>
     </span>
+
+    <template v-if="team">
+      <span class="navlink" @click="tucked = true">
+        <router-link :to="{ name: 'Team' }">{{ team }}</router-link>
+      </span>
+      <span v-if="team" class="navlink" @click="tucked = true">
+        <router-link :to="{ name: 'Vote' }">Vote</router-link>
+      </span>
+      <span v-if="team" class="navlink" @click="tucked = true">
+        <router-link :to="{ name: 'Submission' }">Submission</router-link>
+      </span>
+    </template>
+
     <!-- TODO: accordion for events -->
     <!-- <div id=navdropdown class="navlink"><a>Past Events</a> -->
       <!-- <div class="navdropdowncontent"><a href="/~gamejamdev/events/event_s2019.php">S2019</a></div>
@@ -26,6 +39,7 @@
 <script>
 export default {
   name: 'NavBar',
+  props: { team: String },
   data() {
     return {
       tucked: true,

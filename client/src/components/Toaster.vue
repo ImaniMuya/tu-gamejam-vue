@@ -22,7 +22,7 @@ export default {
   computed: {
     toastStyleVars() {
       return {
-        '--duration': this.duration > 0 ? this.duration/1000 + 's' : "0s"
+        '--duration': this.duration > 0 ? this.duration + 'ms' : "0s"
       }
     }
   },
