@@ -45,24 +45,69 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
 // POST
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-  $content = file_get_contents('php://input');
-  $body = json_decode($content);
-  if (!$body) die("No Body :(");
-  // $insertData = array();
-  // $valStr = implode(",", array_fill(0, count($body), "(".$team["team_id"].", ?, ?)"));
-  // foreach ($body as $rank => $themeId) {
-  //   $insertData[] = $themeId;
-  //   $insertData[] = $rank;
-  // }
-  // $sql = $conn->prepare("INSERT OR REPLACE INTO votes(team_id, theme_id, ranking) VALUES $valStr");
-  // if (!$sql->execute($insertData)) {
-  //   http_response_code(500);
-  //   die("Failed while updating vote.");
-  // }
-  // http_response_code(201);
-  
-  
-  // die("Vote Updated.");
+  foreach($_POST as $qid => $ans) {
+    // $ans = filter_input(INPUT_POST, $ans, FILTER_SANITIZE_STRING);
+    $sql = $conn->prepare("INSERT OR REPLACE INTO 
+      subm_answers(answer, question_id, team_id)
+      VALUES(:answer, :question_id, :team_id)");
+    $sql->bindValue(':question_id', $qid);
+    $sql->bindValue(':answer', $ans);
+    $sql->bindValue(':team_id', $team["team_id"]);
+    if (!$sql->execute()) {
+      http_response_code(500);
+      die("Failed while updating submission.");
+    }
+  }
+  foreach($_FILES as $qid => $file) {
+    if (!$file["name"]) continue;
+    $basename = basename($file["name"]);
+    if ($file["size"] > 72428800) { //50MB TODO: constants
+      http_response_code(400);
+      die("File exceeds size limit.");
+    }
+    //check extension
+    $fileExt = strtolower(pathinfo($basename, PATHINFO_EXTENSION));
+    $allowedExtensions = array("zip","png","jpg","gif"); //TODO: constansts
+    if (!in_array($fileExt, $allowedExtensions)) {
+      http_response_code(400);
+      die("Unsupported file extension: " . $fileExt . " file: " . $basename);
+    }
+
+    //upload file
+    try_create_team_dir($team["team_id"]);
+    $target_file = get_submission_file_path($team["team_id"], $qid, $basename);
+    if (!move_uploaded_file($file["tmp_name"], $target_file)) {
+      http_response_code(500);
+      die("Failed while uploading file.");
+    }
+
+    //delete old file
+    $sql = $conn->prepare("SELECT answer FROM subm_answers 
+      WHERE question_id=:question_id AND team_id=:team_id");
+    $sql->bindValue(':question_id', $qid);
+    $sql->bindValue(':team_id', $team["team_id"]);
+    $sql->execute();
+    $result = $sql->fetch(PDO::FETCH_ASSOC);
+    if ($result && $result["answer"] != $basename) {
+      $oldFile = get_submission_file_path($team["team_id"], $qid, $result["answer"]);
+      unlink($oldFile);
+    }
+
+    //update database
+    $sql = $conn->prepare("INSERT OR REPLACE INTO
+      subm_answers(answer, question_id, team_id)
+      VALUES(:answer, :question_id, :team_id)");
+    $sql->bindValue(':question_id', $qid);
+    $sql->bindValue(':answer', $basename);
+    $sql->bindValue(':team_id', $teamId);
+    if (!$sql->execute()) {
+      http_response_code(500);
+      die("Problem saving files. Try again later.");
+    }
+
+  }
+  http_response_code(201);
+  die("Submission Updated.");
 }
 
 ?>

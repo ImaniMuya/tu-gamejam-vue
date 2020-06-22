@@ -31,4 +31,15 @@ function send_team_email($email, $teamName, $teamId, $secret) {
   mail($email, "TU GameJam Team Confirmation", $msg);
 }
 
+function get_submission_file_path($teamId, $questionId, $baseName) {
+  $fileDir = "./files/"; //TODO: constants
+  return $fileDir . "$teamId/$questionId-$baseName"; 
+}
+
+function try_create_team_dir($teamId) {
+  $fileDir = "./files/";  //TODO: constants
+  $teamDir = $fileDir . $teamId . "/";
+  if (!file_exists($teamDir)) mkdir($teamDir, 0777, true);
+}
+
 ?>
