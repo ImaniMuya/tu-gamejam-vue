@@ -12,7 +12,9 @@
 
     <template v-if="team">
       <span class="navlink" @click="tucked = true">
-        <router-link :to="{ name: 'Team' }">{{ team }}</router-link>
+        <router-link :to="{ name: 'Team' }" class="breakable">
+          <span>{{ team.name }}</span>
+        </router-link>
       </span>
       <span v-if="team" class="navlink" @click="tucked = true">
         <router-link :to="{ name: 'Vote' }">Vote</router-link>
@@ -39,7 +41,7 @@
 <script>
 export default {
   name: 'NavBar',
-  props: { team: String },
+  props: [ "team" ],
   data() {
     return {
       tucked: true,
@@ -80,6 +82,19 @@ export default {
 span.navlink {
   font-size: 25px;
   margin: 7px 0;
+}
+
+.breakable {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.breakable > span{
+  display: inline-block;
+  max-width: 165px;
+  overflow-wrap: break-word;
 }
 
 span.navlink:hover{

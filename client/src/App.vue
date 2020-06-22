@@ -23,7 +23,7 @@ export default {
   components: { NavBar, Toaster },
   data() {
     return {
-      team: null,
+      team: {name: "", id: null},
       warnToast: false,
       loginAttempted: false
     }
@@ -42,10 +42,11 @@ export default {
       if (!this.$teamCookieExists) return;
       this.loginAttempted = true;
       this.$http.get(serverURL + "/login.php", {credentials: "include"})
-      .then(text => {
-        this.team = text;
-        sessionStorage.setItem("team", text);
-        this.toast("Logged into team: " + text);
+      .then(json => {
+        this.team.name = json.name;
+        this.team.id = json.id;
+        sessionStorage.setItem("team", JSON.stringify(json));
+        this.toast("Logged into team: " + json.name);
       })
       .catch(err => {
         document.cookie = `gjt= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
@@ -56,9 +57,9 @@ export default {
     }
   },
   mounted() {
-    if (this.team) return;
-    this.team = sessionStorage.getItem("team");
-    if (this.team == null && this.$teamCookieExists && !this.loginAttempted) {
+    if (this.team.id != null) return;
+    if (sessionStorage.getItem("team")) this.team = JSON.parse(sessionStorage.getItem("team"));
+    if (this.$teamCookieExists && !this.loginAttempted) {
       this.attemptLogin();
     }
   }
@@ -121,8 +122,35 @@ a:hover::after {
 }
 
 input[type=text] {
+  border: 2px solid var(--quadcolor);
   border-radius: 5px;
   padding: 5px;
-  max-width: 250px;
 }
+input[type=text]:focus, textarea:focus {
+  border: 2px solid var(--seccolor);
+  outline: none;
+}
+
+textarea {
+  box-sizing: border-box;
+  border-radius: 5px;
+  padding: 5px;
+  border: 2px inset var(--quadcolor);
+  max-width: 300px;
+  max-height: 500px;
+  min-width: 50px;
+  min-height: 50px;
+}
+
+.submitbtn {
+  display: block;
+  width: 100px;
+  background-color: var(--primcolor);
+  color: var(--tercolor);
+  margin: 10px auto;
+  padding: 4px;
+  border-radius: 5px;
+  transition: all .2s ease-in-out;
+}
+
 </style>

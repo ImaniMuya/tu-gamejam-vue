@@ -1,30 +1,43 @@
 <template>
   <div>
-    <page-header :msg="team">Submit Your Game!</page-header>
-    <loader id="page-loader" v-if="loading" :circlesNum="5"/>
-    <div v-else class="grid">
-      <template v-for="field of submission">
-        <div :key="field.id">
-          {{field.id}}: {{field.label}} - {{field.value}}
-        </div>
-      </template>
-      
-    </div>
+    <page-header :msg="team.name">Submit Your Game!</page-header>
+    <loader v-if="loading" id="page-loader" :circlesNum="5"/>
+    <template v-else>
+      <form class="grid" @submit.prevent ref="form">
+        <template v-for="field of submission">
+          <label :for="field.id" :key="field.id + 'label'">{{ field.label }}</label>
+          <submission-input
+            :key="field.id"
+            :name="field.id"
+            :type="field.type"
+            :teamId="team.id"
+            :disabled="submitting"
+            :imgPristine="field.imgPristine"
+            @imgDirty="field.imgPristine = false"
+            v-model="field.value"
+          />
+        </template>
+      </form>
+      <loader v-if="submitting" id="submit-loader" :circlesNum="3"/>
+      <button v-else @click="submit" class="submitbtn" :disabled="submitting">Submit</button>
+    </template>
   </div>
 </template>
 
 <script>
 import PageHeader from "./sub-components/PageHeader";
 import Loader from "./sub-components/Loader";
+import SubmissionInput from "./sub-components/SubmissionInput";
 import { serverURL } from "../constants";
 
 export default {
   name: "Submission",
-  components: { PageHeader, Loader },
-  props: { team: String },
+  components: { PageHeader, Loader, SubmissionInput },
+  props: ["team"],
   data() {
     return {
       loading: false,
+      submitting: false,
       submission: [],
     }
   },
@@ -53,10 +66,21 @@ export default {
         id: dbSubmissionField.question_id,
         type: dbSubmissionField.category_name,
         label: dbSubmissionField.question,
-        value: dbSubmissionField.answer
+        value: dbSubmissionField.answer,
+        imgPristine: true
       };
+    },
+    submit() {
+      let formData = new FormData(this.$refs.form)
+      this.submitting = true;
+      this.$http.post(serverURL + "/submission.php", {credentials: "include"}, formData)
+      .then(text => {
+        this.$emit("toast", text);
+        this.submission.forEach(x => x.imgPristine = true)
+      })
+      .catch(err => this.$emit("warn", err))
+      .finally(() => this.submitting = false)
     }
-    // mapping of type -> input field
   }
 }
 </script>
@@ -67,12 +91,28 @@ export default {
 
 .grid {
   display: grid;
-  grid-template-columns: auto;
-  gap: 10px 5px;
-  margin: 15px 20px;
-  align-items: center;
+  grid-template-columns: max-content max-content;
+  gap: 10px 10px;
+  margin: 20px;
+  margin-left: 60px;
+  align-items: start;
+  justify-content: center;
 }
 
+@media screen and (max-width: 600px) {
+  .grid {
+    grid-template-columns: auto;
+    gap: 5px 5px;
+    text-align: right;
+  }
+  label {
+    text-align: left;
+    margin-top: 15px;
+  }
+}
 
+#submit-loader {
+  margin: 20px auto;
+}
 
 </style>

@@ -29,15 +29,15 @@ Object.defineProperty(Vue.prototype, '$http', {
       return fetch(url, settings).then(standardResponseHandler(200));
     },
     post(url, settings, body) {
-      if (typeof body != "string") body = JSON.stringify(body);
+      if (body instanceof FormData || typeof body == "string") settings.body = body;
+      else settings.body = JSON.stringify(body);
       settings.method = "POST";
-      settings.body = body;
       return fetch(url, settings).then(standardResponseHandler(201));
     },
     put(url, settings, body) {
-      if (typeof body != "string") body = JSON.stringify(body);
+      if (body instanceof FormData || typeof body == "string") settings.body = body;
+      else settings.body = JSON.stringify(body);
       settings.method = "PUT";
-      settings.body = body;
       return fetch(url, settings).then(standardResponseHandler(200));
     },
     delete(url, settings) {

@@ -31,7 +31,7 @@
           @dragend="handleDragEnd()"
         ></div> 
       </ul>
-      <button @click="sendVote()">Submit</button>
+      <button class="submitbtn" @click="sendVote()">Submit</button>
     </div>
   </div>
 </template>
@@ -183,17 +183,6 @@ export default {
   -khtml-user-select: none;
   -webkit-user-select: none;
   user-select: none;
-}
-
-button {
-  display: block;
-  width: 100px;
-  background-color: var(--primcolor);
-  color: var(--tercolor);
-  margin: 10px auto;
-  padding: 0.65%;
-  border-radius: 5px;
-  transition: all .2s ease-in-out;
 }
 
 button:hover {

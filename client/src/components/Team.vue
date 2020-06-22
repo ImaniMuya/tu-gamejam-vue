@@ -1,6 +1,6 @@
 <template>
   <div>
-    <page-header :msg="team">Team Members</page-header>
+    <page-header :msg="team.name">Team Members</page-header>
     <loader id="page-loader" v-if="loading" :circlesNum="5"/>
     <div v-else class="grid">
       <div class="grid-heading">Name</div>
@@ -46,7 +46,7 @@ import { emailRE, serverURL } from "../constants";
 export default {
   name: "Team",
   components: { PageHeader, Loader },
-  props: { team: String },
+  props: ["team"],
   data() {
     return {
       people: [],

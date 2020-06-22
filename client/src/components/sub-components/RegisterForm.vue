@@ -75,6 +75,7 @@ export default {
   grid-template-columns: auto auto;
   gap: 10px 20px;
   margin: 0 20px;
+  padding-bottom: 10px;
   align-items: center;
 }
 
@@ -103,11 +104,6 @@ form.submitting {
   background-color: #777;
 }
 
-.submitbtn {
-  display: block;
-  margin: 10px auto;
-}
-
 .absolute-center {
   margin: auto;
   position: absolute;
@@ -119,4 +115,7 @@ ul.errors {
   color: red;
 }
 
+input {
+  max-width: 250px;
+}
 </style>

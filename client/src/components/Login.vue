@@ -14,7 +14,7 @@ export default {
     }
   },
 
-  created() {
+  mounted() {
     const teamId = this.$route.query.t;
     const secret = this.$route.query.s;
 
@@ -24,7 +24,8 @@ export default {
       this.$emit("toast", "Please use the emailed link to log in.");
       return;
     }
-
+    
+    sessionStorage.removeItem("team");
     document.cookie = `gjt=${teamId}; expires=${this.getFutureTimestamp(3)}`;
     document.cookie = `gjs=${secret}; expires=${this.getFutureTimestamp(3)}`;
     this.$emit("login");
