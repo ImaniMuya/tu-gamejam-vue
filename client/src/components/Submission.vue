@@ -5,7 +5,7 @@
     <template v-else>
       <form class="grid" @submit.prevent ref="form">
         <template v-for="field of submission">
-          <label :for="field.id" :key="field.id + 'label'">{{ field.label }}</label>
+          <label class="label" :for="field.id" :key="field.id + 'label'">{{ field.label }}</label>
           <submission-input
             :key="field.id"
             :name="field.id"
@@ -40,10 +40,8 @@ export default {
       submitting: false,
       submission: [],
     }
-  },
-  
+  },  
   created() {
-    window.vm=this;
     if (!this.$teamCookieExists) {
       this.$emit("warn", "You need to login first.")
       this.$router.push({ name: 'Home'});
@@ -105,7 +103,7 @@ export default {
     gap: 5px 5px;
     text-align: right;
   }
-  label {
+  .label {
     text-align: left;
     margin-top: 15px;
   }

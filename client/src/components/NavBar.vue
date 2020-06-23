@@ -10,7 +10,7 @@
       <router-link :to="{ name }">{{name}}</router-link>
     </span>
 
-    <template v-if="team">
+    <template v-if="team.id">
       <span class="navlink" @click="tucked = true">
         <router-link :to="{ name: 'Team' }" class="breakable">
           <span>{{ team.name }}</span>

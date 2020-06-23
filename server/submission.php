@@ -1,6 +1,6 @@
 <?php
 header('Access-Control-Allow-Origin: http://localhost:8080'); //TODO: make constants file
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST");
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 header('Access-Control-Allow-Credentials: true');
 
@@ -46,17 +46,22 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 // POST
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
   foreach($_POST as $qid => $ans) {
-    // $ans = filter_input(INPUT_POST, $ans, FILTER_SANITIZE_STRING);
-    $sql = $conn->prepare("INSERT OR REPLACE INTO 
-      subm_answers(answer, question_id, team_id)
-      VALUES(:answer, :question_id, :team_id)");
-    $sql->bindValue(':question_id', $qid);
-    $sql->bindValue(':answer', $ans);
-    $sql->bindValue(':team_id', $team["team_id"]);
-    if (!$sql->execute()) {
-      http_response_code(500);
-      die("Failed while updating submission.");
+    if ($ans) {
+      // $ans = filter_input(INPUT_POST, $ans, FILTER_SANITIZE_STRING);
+      $sql = $conn->prepare("INSERT OR REPLACE INTO 
+        subm_answers(answer, question_id, team_id)
+        VALUES(:answer, :question_id, :team_id)");
+      $sql->bindValue(':question_id', $qid);
+      $sql->bindValue(':answer', $ans);
+      $sql->bindValue(':team_id', $team["team_id"]);
+    } else { 
+      //delete existing answer if field is empty
+      $sql = $conn->prepare("DELETE FROM subm_answers
+        WHERE question_id=:question_id AND team_id=:team_id");
+      $sql->bindValue(':question_id', $qid);
+      $sql->bindValue(':team_id', $team["team_id"]);
     }
+    if (!$sql->execute()) die_error("Failed while updating submission.");
   }
   foreach($_FILES as $qid => $file) {
     if (!$file["name"]) continue;

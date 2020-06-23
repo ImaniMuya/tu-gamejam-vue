@@ -5,6 +5,10 @@ function die_JSON($arr) {
   die(json_encode($arr));
 }
 
+function die_error($err) {
+  http_response_code(500);
+  die($err);
+}
 
 function get_db_connection() { //TODO: would a try catch here help?
   $conn = new PDO('sqlite:./sql/current.db');

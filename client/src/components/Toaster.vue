@@ -1,7 +1,7 @@
 <template>
   <transition name="fade" :duration="500">
-    <div v-if="show" :class="{ show, warn }" :style="toastStyleVars" @click="handleClick()">
-      <img v-if="warn" src="../assets/warn.png" alt="Warning"/>
+    <div v-if="show" id="toast" :class="{ show, warn }" :style="toastStyleVars" @click="handleClick()">
+      <img class="icon" v-if="warn" src="../assets/warn.png" alt="Warning"/>
       {{ msg }}
     </div>
   </transition>
@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style scoped>
-div {
+#toast {
   min-width: 250px;
   background-color: #333;
   color: #fff;
@@ -84,11 +84,11 @@ div {
   bottom: 0px;
 }
 
-div.warn {
+#toast.warn {
   background-color: var(--seccolor);
 }
 
-div::after {
+#toast::after {
   content: '\A';
   position: absolute;
   background: white;
@@ -98,15 +98,15 @@ div::after {
   transition: width var(--duration) ease;
   width: 100%;
 }
-div.fade-enter::after {
+#toast.fade-enter::after {
   width: 0%;
 }
 
-div.leave-active::after {
+#toast.leave-active::after {
   width: 100%;
 }
 
-img {
+.icon {
   height: 1em;
   margin-right: .25em;
 }

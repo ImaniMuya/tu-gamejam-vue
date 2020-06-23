@@ -1,5 +1,5 @@
 <template>
-  <div>Attempting Login...</div>
+  <div class="message">Attempting Login...</div>
 </template>
 
 <script>
@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style scoped>
-div {
+.message {
   text-align: center;
   padding: 50px;
 }
