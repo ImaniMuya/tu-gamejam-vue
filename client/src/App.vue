@@ -1,8 +1,9 @@
 <template>
   <div id="app">
-    <nav-bar ref="nav" :team="team" />
+    <nav-bar ref="nav" :team="team" :pastEvents="pastEvents"/>
     <div class="app-content" @click="tuckNav">
-      <router-view 
+      <router-view
+        :key="$route.fullPath"
         @toast="toast"
         @warn="warn"
         @login="attemptLogin()"
@@ -25,7 +26,8 @@ export default {
     return {
       team: {name: "", id: null},
       warnToast: false,
-      loginAttempted: false
+      loginAttempted: false,
+      pastEvents: {}
     }
   },
   methods: {
@@ -55,6 +57,13 @@ export default {
         this.warn(err);
       });
     }
+  },
+  created() {
+    this.$http.get(serverURL + `/past.php`)
+    .then(events => {
+      this.pastEvents = events;
+    })
+    .catch(err => this.$emit("warn", err))
   },
   mounted() {
     if (this.team.id != null) return;

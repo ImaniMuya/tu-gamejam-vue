@@ -6,6 +6,7 @@
     <loader v-if="loading" :circlesNum="5"/>
     <div v-else class="submission-container">
       <submission-display v-for="team in teams" :key="team.id"
+        :pastEvent="pastEvent"
         :submission="submissions[team.id]"
         :team="team"
         @popup="popupImage"
@@ -15,36 +16,18 @@
 </template>
 
 <script>
-import Loader from './sub-components/Loader.vue';
-import SubmissionDisplay from './sub-components/SubmissionDisplay.vue';
-import { serverURL } from "../constants";
+import Loader from '@/components/sub-components/Loader.vue';
+import SubmissionDisplay from '@/components/sub-components/SubmissionDisplay.vue';
 export default {
   name: "Event",
   components: { Loader, SubmissionDisplay },
+  props: [ "submissions", "teams", "pastEvent" ],
   data() {
     return {
       loading: false,
-      submissions: {},
-      teams: [],
       modalTucked: true,
       modalImgSrc: "",
     }
-  },
-  created() {
-    this.loading = true;
-    this.$http.get(serverURL+"/event.php")
-    .then(response => {
-      this.submissions = response.answers;
-      let submissionlessTeams = []
-      for (let id in response.teams) {
-        let team = {...response.teams[id], id};
-        if (id in this.submissions) this.teams.push(team);
-        else submissionlessTeams.push(team);
-      }
-      this.teams.push(...submissionlessTeams);
-    })
-    .catch(err => this.$emit("warn", err))
-    .finally(() => this.loading = false);
   },
   methods: {
     popupImage($event) {
@@ -63,7 +46,7 @@ export default {
   transform: none;
   height: 100vh;
   width: 100vw;
-  background-color: rgba(0,0,0,0.9);
+  background-color: rgba(0,0,0,0.7);
   display: flex;
   flex-flow: column;
   align-items: center;

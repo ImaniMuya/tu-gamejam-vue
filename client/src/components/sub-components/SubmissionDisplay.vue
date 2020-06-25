@@ -10,12 +10,9 @@
         <template v-if="team.members && team.members.length">
         <div class="field-label">Members</div>
         <div>
-          <template v-for="(member, index) in team.members">
-            <span class="member" :key="index">{{ member }}</span>
-          </template>
+          <span v-for="(member, index) in team.members" class="member" :key="index">{{ member }}</span>
         </div>
         </template>
-
         <template v-for="(field, index) in displayFields">
         <div :key="index" class="field-label">{{ field.name }}</div>
         <div v-if="field.type == 'text'" :key="index+'-val'">{{ field.value }}</div>
@@ -37,7 +34,7 @@ import ImageCarousel from './ImageCarousel.vue';
 export default {
   name: "SubmissionDisplay",
   components: { ImageCarousel },
-  props: ["submission", "team"],
+  props: ["submission", "team", "pastEvent"],
   data() {
     return {
       imgSrcs: [],
@@ -65,7 +62,9 @@ export default {
   },
   methods: {
     getResourcePath(qid, basename) {
-      return serverURL + `/files/${this.team.id}/${qid}-${basename}`;
+      let teampath = `${this.team.id}/${qid}-${basename}`;
+      if (!this.pastEvent) return serverURL + "/files/" + teampath;
+      else return serverURL + `/past/${this.pastEvent}/files/${teampath}`;
     },
     appendTextField(name, type) {
       if (!this.submission[name]) return;

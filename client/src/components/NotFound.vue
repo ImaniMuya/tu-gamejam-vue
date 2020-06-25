@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="message">
     Not sure what you're looking for!
   </div>
 </template>
@@ -11,5 +11,7 @@ export default {
 </script>
 
 <style scoped>
-
+.message {
+  margin: 40px auto;
+}
 </style>

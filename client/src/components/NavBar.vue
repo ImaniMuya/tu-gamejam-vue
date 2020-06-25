@@ -9,6 +9,15 @@
     <span class="navlink" v-for="(name, index) in links" :key="index" @click="tucked = true">
       <router-link :to="{ name }">{{name}}</router-link>
     </span>
+    <span class="navlink">
+      <a @click="pastEventsTucked = !pastEventsTucked">Past Events</a>
+    </span>
+    <div class="dropdown" :class="{'tucked': pastEventsTucked}">
+      <div class="navlink" v-for="(name, index) in pastEvents" :key="'past'+index" @click="tucked = true">
+        <router-link :to="{ name: 'Past', params: { eventName: name } }">{{name}}</router-link>
+      </div>
+    </div>
+
 
     <template v-if="team.id">
       <span class="navlink" @click="tucked = true">
@@ -16,23 +25,13 @@
           <span>{{ team.name }}</span>
         </router-link>
       </span>
-      <span v-if="team" class="navlink" @click="tucked = true">
+      <span class="navlink" @click="tucked = true">
         <router-link :to="{ name: 'Vote' }">Vote</router-link>
       </span>
-      <span v-if="team" class="navlink" @click="tucked = true">
+      <span class="navlink" @click="tucked = true">
         <router-link :to="{ name: 'Submission' }">Submission</router-link>
       </span>
     </template>
-
-    <!-- TODO: accordion for events -->
-    <!-- <div id=navdropdown class="navlink"><a>Past Events</a> -->
-      <!-- <div class="navdropdowncontent"><a href="/~gamejamdev/events/event_s2019.php">S2019</a></div>
-      <div class="navdropdowncontent"><a>F2018</a></div>
-      <div class="navdropdowncontent"><a>S2018</a></div>
-      <div class="navdropdowncontent"><a>F2017</a></div>
-      <div class="navdropdowncontent"><a>S2017</a></div>
-      <div class="navdropdowncontent"><a>F2016</a></div> -->
-    <!-- </div> -->
   </div>
 </div>
 
@@ -41,13 +40,14 @@
 <script>
 export default {
   name: 'NavBar',
-  props: [ "team" ],
+  props: [ "team", "pastEvents" ],
   data() {
     return {
       tucked: true,
-      links: ["Home", "Rules", "Resources"] //TODO: get links from router?
+      links: ["Home", "Rules", "Resources"], //TODO: get links from router?
+      pastEventsTucked: true
     }
-  }
+  },
 }
 
 </script>
@@ -102,37 +102,9 @@ span.navlink:hover{
   color: var(--seccolor);
 }
 
-span.navlink:hover .navdropdowncontent{
+.navlink, .navlink a {
   color: var(--tercolor);
 }
-span.navlink a{
-  color: var(--tercolor);
-}
-/* #navdropdown {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding-bottom: 50px;
-  transition: all 5s ease-in-out;
-}
-
-.navdropdowncontent{
-  display: none;
-  position: relative;
-  padding-top: 2%;
-  color: var(--tercolor);
-  z-index: 1;
-} 
-
-#navdropdown:hover .navdropdowncontent {
-  display: inline-block;
-}
-
-.navdropdowncontent:hover{
-  color: var(--seccolor);
-} */
 
 #navbtn {
   box-sizing: border-box;
@@ -186,5 +158,20 @@ span.navlink a{
 {
   transform: none;
 }
+
+.dropdown.tucked {
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: all .5s, visibility 0s .5s;
+}
+
+.dropdown {
+  opacity: 1;
+  max-height: 200px; /* may need to change me eventually! */
+  transition: all .5s;
+  text-align: center;
+}
+
 
 </style>

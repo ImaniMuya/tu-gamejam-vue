@@ -1,7 +1,7 @@
 <template>
-  <header>
-    <h1 :class="{'mb-0': msg}"><slot></slot></h1>
-    <h2 v-if="msg">{{msg}}</h2>
+  <header class="outer">
+    <h1 class="head" :class="{'mb-0': msg}"><slot></slot></h1>
+    <h2 class="subhead" v-if="msg">{{msg}}</h2>
   </header>
 </template>
 
@@ -15,21 +15,25 @@ export default {
 </script>
 
 <style scoped>
-h1, h2{
+.head, .subhead {
   text-align: center;
   font-variant: small-caps;
 }
 
-h1 {
+.head {
   font-weight: bold;
   font-size: 70px;
+}
+
+.subhead {
+  overflow-wrap: break-word;
 }
 
 .mb-0 {
   margin-bottom: 0;
 }
 
-header {
+.outer {
   box-sizing: border-box;
   background-color: var(--seccolor);
   padding: 10px 50px;

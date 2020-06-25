@@ -12,7 +12,7 @@
         :class="{hidden: swap}"
       />
     </div>
-    <div id="ribbon">
+    <div id="ribbon" v-if="imgSrcs.length > 1">
       <div v-for="(src, index) in imgSrcs" :key="index"
         title="Show"
         :class="{selected: index == chosenIdx}"
