@@ -10,8 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
   if (!array_key_exists("event", $_GET)) {
     header('Content-type: application/json');
     http_response_code(200);
+    //TODO: return json array instead of object
+    //TODO: return in proper sorted order (need to store order somewhere)
     $pastEvents = array_diff(scandir("./past/"), array('..', '.'));
-    die_JSON($pastEvents); //TODO: return json array instead of object
+    die_JSON($pastEvents);
   }
 
   $event = $_GET["event"];
