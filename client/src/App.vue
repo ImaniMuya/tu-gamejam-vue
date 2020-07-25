@@ -3,7 +3,6 @@
     <nav-bar ref="nav" :team="team" :pastEvents="pastEvents"/>
     <div class="app-content" @click="tuckNav">
       <router-view
-        :key="$route.fullPath"
         @toast="toast"
         @warn="warn"
         @login="attemptLogin()"

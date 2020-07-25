@@ -3,8 +3,7 @@
     <div id="imgModal" :class="{tucked: modalTucked}" @click="modalTucked = true">
       <img :src="modalImgSrc"/>
     </div>
-    <loader v-if="loading" :circlesNum="5"/>
-    <div v-else class="submission-container">
+    <div class="submission-container">
       <submission-display v-for="team in teams" :key="team.id"
         :pastEvent="pastEvent"
         :submission="submissions[team.id]"
@@ -16,15 +15,13 @@
 </template>
 
 <script>
-import Loader from '@/components/sub-components/Loader.vue';
 import SubmissionDisplay from '@/components/sub-components/SubmissionDisplay.vue';
 export default {
   name: "Event",
-  components: { Loader, SubmissionDisplay },
-  props: [ "submissions", "teams", "pastEvent" ],
+  components: { SubmissionDisplay },
+  props: [ "submissions", "teams", "pastEvent"],
   data() {
     return {
-      loading: false,
       modalTucked: true,
       modalImgSrc: "",
     }

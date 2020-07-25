@@ -54,6 +54,7 @@ $people = $stmt->fetchAll();
 foreach ($people as $key => $person) {
   if (strtoupper($person["email"]) == strtoupper($body->email)) {
     http_response_code(400);
+    //TODO: this is potentially wrong. Could be seeing team member.
     die("This email has already registered a team");
   }
 }

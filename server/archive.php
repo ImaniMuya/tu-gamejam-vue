@@ -49,16 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   }
   mkdir("./files/");
 
-  if (!copy("./sql/current.db", "./past/$event/data.db")) { //maybe unnecessary
+  if (!copy("./sql/current.db", "./past/$event/data.db")) { //maybe unnecessary (already have json)
     http_response_code(400);
     die("Failed while moving db.");
   }
-  //recreate empty db
-  touch("./sql/current.db");
-  $conn = get_db_connection();
+
+  //reset db
   $query = file_get_contents("./sql/reset-db.sql");
-  $sql = $conn->prepare($query);
-  if(!$sql->execute()) {
+  if (!$conn->exec($query) === FALSE) {
     http_response_code(500);
     die("Failed to reset db.");
   }
