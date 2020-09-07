@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   die();
 }
 
+// TODO
 // if (/* something */) {
 //   http_response_code(403);
 //   die("Admin only.");

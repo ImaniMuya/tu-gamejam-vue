@@ -32,6 +32,14 @@ CREATE TABLE themes (
     theme TEXT
 );
 
+DROP TABLE IF EXISTS awards;
+CREATE TABLE awards (
+    award_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    award TEXT,
+    team_id,
+    FOREIGN KEY(team_id) REFERENCES teams(team_id)
+);
+
 DROP TABLE IF EXISTS subm_categories;
 CREATE TABLE subm_categories (
     category_id INTEGER PRIMARY KEY,
@@ -57,7 +65,10 @@ CREATE TABLE subm_answers (
 );
 
 INSERT INTO teams (name, the_secret)
-VALUES ("ed", 1234);
+VALUES 
+("ed", 1234),
+("moni", 4321),
+("edrani", 5555);
 
 INSERT INTO themes (theme) 
 VALUES
