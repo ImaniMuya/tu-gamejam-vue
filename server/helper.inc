@@ -44,6 +44,55 @@ function try_create_team_dir($teamId) {
   if (!file_exists($teamDir)) mkdir($teamDir, 0777, true);
 }
 
+/**
+ * returns array like [
+ *   [team_id] => "name"
+ * ]
+ */
+function getTeamNameDictionary($conn) {
+  $sql = $conn->prepare("SELECT team_id, name FROM teams");
+  if (!$sql->execute()) die_error("Failed while getting teams.");
+  $teamsDict = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
+  return $teamsDict;
+}
+
+/**
+ * returns array like [
+ *  [team_id] => ["member", "member"]
+ * ]
+ */
+function getTeamMemberDictionary($conn) {
+  $sql = $conn->prepare("SELECT teams.team_id, person_name FROM teams 
+    INNER JOIN people ON people.team_id = teams.team_id");
+  if (!$sql->execute()) die_error("Failed while getting team members.");
+  $members = $sql->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_COLUMN);
+  return $members;
+}
+
+/**
+ * returns array like [
+ *    "id" => 1,
+ *    "name" => "string",
+ *    "members" => ["string", "string"]
+ * ]
+ */
+function getTeamsWithMembers($conn) {
+  $teamsDict = getTeamNameDictionary($conn);
+
+  $members = getTeamMemberDictionary($conn);
+
+  $teams = [];
+  foreach ($teamsDict as $id => $name) {
+    $teams[] = [
+      "id" => $id,
+      "name" => $name,
+      "members" => $members[$id]
+    ];
+  }
+  return $teams;
+}
+
+
 function getEventData($conn) { //TODO: separate file for sql calls
   // get answers
   $sql = $conn->prepare("SELECT ans.team_id, que.question_id, que.question AS q, ans.answer AS a
@@ -63,36 +112,16 @@ function getEventData($conn) { //TODO: separate file for sql calls
     $answers[$tid] = $teamAnswers;
   }
   
-  // teams list
-  $sql = $conn->prepare("SELECT team_id, name FROM teams");
-  if (!$sql->execute()) die_error("Failed while getting teams.");
-  $teamsDict = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
-
-  //team members
-  $sql = $conn->prepare("SELECT teams.team_id, person_name FROM teams 
-    INNER JOIN people ON people.team_id = teams.team_id");
-  if (!$sql->execute()) die_error("Failed while getting team members.");
-  $members = $sql->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_COLUMN);
-
-  $teams = [];
+  $teams = getTeamsWithMembers($conn);
   $submissionlessTeams = [];
-  foreach ($teamsDict as $id => $name) {
-    $team = [
-      "id" => $id,
-      "name" => $name,
-      "members" => $members[$id]
-    ];
-    if (array_key_exists($id, $answers)) $teams[] = $team;
-    else $submissionlessTeams[] = $team;
+  foreach ($teams as $i => $team) {
+    $id = $team["id"];
+    if (!array_key_exists($id, $answers)) {
+      $submissionlessTeams[] = $team;
+      unset($teams[$i]);
+    }
   }
   $teams = array_merge($teams, $submissionlessTeams);
-
-  // question categories
-  // $sql = $conn->prepare("SELECT question, category_name FROM subm_questions 
-  //   INNER JOIN subm_categories ON subm_questions.question_category = subm_categories.category_id");
-  // if (!$sql->execute()) die_error("Failed while getting categories.");
-  // $categories = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
-
   http_response_code(200);
   return ["answers" => $answers, "teams" => $teams];
 }
