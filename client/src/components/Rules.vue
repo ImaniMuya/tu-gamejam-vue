@@ -4,6 +4,7 @@
     <div class="flex_col">
       <div class="content flex_left">
         <p>Below are the rules of Game Jam</p>
+        <p>Contact <a href="mailto://jon.denning@taylor.edu">Dr. Denning</a> if you have any questions!</p>
         <ul>
           <li>The GameJam is for Taylor University students and alumni only or by invitation.</li>
           <li>All game content must be created from scratch, except for music, sounds, and photos.  All used content must have appropriate license and be properly cited.</li>

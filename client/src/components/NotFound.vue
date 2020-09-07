@@ -13,5 +13,6 @@ export default {
 <style scoped>
 .message {
   margin: 40px auto;
+  text-align: center;
 }
 </style>
