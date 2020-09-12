@@ -161,4 +161,18 @@ textarea {
   transition: all .2s ease-in-out;
 }
 
+.row {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.col {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
 </style>

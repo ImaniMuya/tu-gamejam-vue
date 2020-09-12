@@ -20,7 +20,6 @@ export default {
     }
   },
   created() {
-    window.vm = this;
     this.loading = true;
     this.$http.get(serverURL+"/event.php")
     .then(response => {

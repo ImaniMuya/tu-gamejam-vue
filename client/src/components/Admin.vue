@@ -5,29 +5,47 @@
     <timecode />
 
     <h2>Theme Editor</h2>
-    <theme-grid />
+    <theme-grid 
+      @toast="$emit('toast', $event)"
+      @warn="$emit('warn', $event)"
+    />
 
     
     <h2>Awards</h2>
-    <award-grid />
+    <award-grid :teams="teams" 
+      @toast="$emit('toast', $event)"
+      @warn="$emit('warn', $event)"
+    />
 
     <h2>Archive Event</h2>
-    <input type="text" v-model="eventName" placeholder="S2020" />
-    <input type="text" v-model="eventTitle" placeholder="GameJam Spring 2020" />
-    <button class="submitbtn" @click="postArchive">Archive</button>
+    <div class="row">
+      <div class="col">
+        <label for="event-name">Short Name for link</label>
+        <input type="text" id="event-name" v-model="eventName" placeholder="S2020" />
+      </div>
+      <div class="col">
+        <label for="event-title">Event Description</label>
+        <input type="text" id="event-title" v-model="eventTitle" placeholder="GameJam Spring 2020" />
+      </div>
+      <button id="archive-btn" class="submitbtn" @click="postArchive">Archive</button>
+    </div>
 
     <h2>All teams</h2>
     <div id="teamGrid">
-      <template v-for="team in teams">
-        <div :key="team.id">
-          {{ team.id }}
-           <a :key="team.id+'-login'" :href="loginLink(team)">login as {{ team.name }}</a>
+      <template v-for="(team, id) in teams">
+        <div :key="id">
+          {{ id }}
         </div>
-        <div :key="team.id+'-name'">{{ team.name }}</div>
-        <ul :key="team.id+'-members'">
-          <li v-for="(member, idx) in team.members" :key="idx">
-            {{ member }}
-          </li>
+        <div :key="id+'login'">
+           <a :key="id+'-login'" :href="loginLink(team)">login as {{ team.name }}</a>
+        </div>
+        <div :key="id+'-name'">{{ team.name }}</div>
+        <ul :key="id+'-members'" class="members">
+          <li
+            class="member"
+            v-for="(member, idx) in team.members"
+            :key="idx"
+          >{{ member }}</li>
         </ul>
       </template>
     </div>
@@ -53,10 +71,17 @@ export default {
   },
 
   created() {
-    window.vm = this;
     this.loadingTeams = true;
     this.$http.get(serverURL + "/teams.php")
-    .then(json => this.teams = json)
+    .then(json => {
+      json.forEach(team => {
+        this.$set(this.teams, team.id, {
+          name: team.name,
+          members: team.members,
+          secret: team.secret
+        });
+      });
+    })
     .catch(err => this.emit("warn", err))
     .finally(() => this.loadingTeams = false);
   },
@@ -78,5 +103,31 @@ export default {
 }
 </script>
 <style scoped>
+#archive-btn {
+  display: inline-block;
+  margin: 0 20px;
+}
 
+#teamGrid {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  align-content: center;
+  justify-content: center;;
+  gap: 10px;
+  margin: 20px;
+}
+
+#teamGrid > ul.members {
+  margin: 0;
+  padding: 0;
+}
+
+#teamGrid > ul > li.member {
+  display: inline;
+  list-style-type: none;
+}
+
+#teamGrid > ul > li.member + li.member::before {
+  content: ", ";
+}
 </style>
