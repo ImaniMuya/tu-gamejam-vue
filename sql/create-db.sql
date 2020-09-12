@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS awards;
 CREATE TABLE awards (
     award_id INTEGER PRIMARY KEY AUTOINCREMENT,
     award TEXT,
-    team_id,
+    team_id INTEGER,
     FOREIGN KEY(team_id) REFERENCES teams(team_id)
 );
 
