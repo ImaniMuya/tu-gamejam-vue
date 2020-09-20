@@ -77,7 +77,7 @@ export default {
     .then(json => json.forEach(x => 
       this.awards.push(this.createAward(x))
     ))
-    .catch(err => this.emit("warn", err))
+    .catch(err => this.$emit("warn", err))
     .finally(() => this.loadingAwards = false);
   },
   methods: {

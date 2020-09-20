@@ -54,7 +54,7 @@ export default {
     this.loadingThemes = true;
     this.$http.get(serverURL + "/theme.php")
     .then(json => json.forEach(x => this.themes.push(this.createTheme(x))))
-    .catch(err => this.emit("warn", err))
+    .catch(err => this.$emit("warn", err))
     .finally(() => this.loadingThemes = false);
   },
   computed: {

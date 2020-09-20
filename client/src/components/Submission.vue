@@ -10,6 +10,7 @@
             :key="field.id"
             :name="field.id"
             :type="field.type"
+            :placeholder="field.placeholder"
             :teamId="team.id"
             :disabled="submitting"
             :imgPristine="field.imgPristine"
@@ -65,6 +66,7 @@ export default {
         type: dbSubmissionField.category_name,
         label: dbSubmissionField.question,
         value: dbSubmissionField.answer,
+        placeholder: dbSubmissionField.placeholder,
         imgPristine: true
       };
     },

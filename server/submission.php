@@ -27,7 +27,7 @@ if (!$team) {
 
 // GET
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-  $sql = $conn->prepare("SELECT q.question_id, q.question, c.category_name, a.answer
+  $sql = $conn->prepare("SELECT q.question_id, q.question, q.placeholder, c.category_name, a.answer
     FROM subm_questions q
     INNER JOIN subm_categories c ON q.question_category = c.category_id
     LEFT JOIN subm_answers a ON a.question_id = q.question_id AND team_id = :teamId");

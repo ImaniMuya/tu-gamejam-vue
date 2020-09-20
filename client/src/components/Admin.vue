@@ -37,7 +37,7 @@
           {{ id }}
         </div>
         <div :key="id+'login'">
-           <a :key="id+'-login'" :href="loginLink(team)">login as {{ team.name }}</a>
+           <a :key="id+'-login'" :href="loginLink(id, team)">login as {{ team.name }}</a>
         </div>
         <div :key="id+'-name'">{{ team.name }}</div>
         <ul :key="id+'-members'" class="members">
@@ -71,6 +71,13 @@ export default {
   },
 
   created() {
+    // let adminCookie = document.cookie.split(';').some(item => item.trim().startsWith("gja="));
+    // if (!adminCookie) {
+    //   let password = prompt("Admin Password")
+    //   if (password) {
+    //     // document.cookie = `gja=${}; expires=${this.getFutureTimestamp(3)}`;
+    //   }
+    // }
     this.loadingTeams = true;
     this.$http.get(serverURL + "/teams.php")
     .then(json => {
@@ -82,12 +89,12 @@ export default {
         });
       });
     })
-    .catch(err => this.emit("warn", err))
+    .catch(err => this.$emit("warn", err))
     .finally(() => this.loadingTeams = false);
   },
   methods: {
-    loginLink(team) {
-      return `/login?t=${team.id}&s=${team.secret}`;
+    loginLink(id, team) {
+      return `/login?t=${id}&s=${team.secret}`;
     },
 
     postArchive() {

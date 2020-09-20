@@ -1,10 +1,10 @@
 <template>
   <div>
     <input v-if="isText" type="text" :value="value" @input="$emit('input', $event.target.value)" 
-      :name="name" :id="name" :disabled="disabled"
+      :name="name" :id="name" :disabled="disabled" :placeholder="[[placeholder]]"
     />
     <textarea v-else-if="isTextArea" :value="value" @input="$emit('input', $event.target.value)"
-      :name="name" :id="name" :disabled="disabled"
+      :name="name" :id="name" :disabled="disabled" :placeholder="[[placeholder]]"
       rows='4' cols='40' wrap="soft" maxlength="2000"
     ></textarea>
     <div v-else-if="isImage">
@@ -27,7 +27,7 @@
 import { serverURL } from "../../constants";
 export default {
   name: "SubmissionInput",
-  props: ["type", "value", "name", "teamId", "imgPristine", "disabled"],
+  props: ["type", "value", "name", "placeholder", "teamId", "imgPristine", "disabled"],
   computed: {
      isText() { return this.type === "text" },
      isTextArea() { return this.type === "textarea" },

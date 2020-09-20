@@ -3,12 +3,17 @@
     <div id="imgModal" :class="{tucked: modalTucked}" @click="modalTucked = true">
       <img :src="modalImgSrc"/>
     </div>
+    <winners :teams="teams"
+      @toast="$emit('toast', $event)"
+      @warn="$emit('warn', $event)"
+    />
     <div class="submission-container">
       <submission-display v-for="team in teams" :key="team.id"
         :pastEvent="pastEvent"
         :submission="submissions[team.id]"
         :team="team"
         @popup="popupImage"
+        :id="[team.name]"
       />
     </div>
   </div>
@@ -16,9 +21,11 @@
 
 <script>
 import SubmissionDisplay from '@/components/sub-components/SubmissionDisplay.vue';
+import Winners from './sub-components/Winners.vue';
+
 export default {
   name: "Event",
-  components: { SubmissionDisplay },
+  components: { SubmissionDisplay, Winners },
   props: [ "submissions", "teams", "pastEvent"],
   data() {
     return {

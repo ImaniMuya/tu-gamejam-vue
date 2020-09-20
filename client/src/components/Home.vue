@@ -2,7 +2,11 @@
   <div>
     <page-header>CSE GameJam</page-header>
     <div><router-link :to="'/register'">register</router-link></div>
-    <event :submissions="submissions" :teams="teams" />
+    <event 
+      @toast="$emit('toast', $event)"
+      @warn="$emit('warn', $event)"
+      :submissions="submissions" :teams="teams" 
+    />
   </div>
 </template>
 
