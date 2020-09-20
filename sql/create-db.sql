@@ -51,6 +51,7 @@ CREATE TABLE subm_questions (
     question_id INTEGER PRIMARY KEY,
     question TEXT,
     question_category INTEGER,
+    placeholder TEXT,
     FOREIGN KEY(question_category) REFERENCES subm_categories(category_id)
 );
 
@@ -70,6 +71,12 @@ VALUES
 ("moni", 4321),
 ("edrani", 5555);
 
+INSERT INTO people (person_name, email, team_id)
+VALUES 
+("Joey", "how@you.doing" , 1),
+("Monica", "ok@friends.com" , 2),
+("Ross", "hi@friends.com" , 3);
+
 INSERT INTO themes (theme) 
 VALUES
 ("Diverge/Diversion"),
@@ -86,13 +93,13 @@ VALUES
 (4, "file");
 
 
-INSERT INTO subm_questions (question, question_category) 
+INSERT INTO subm_questions (question, question_category, placeholder) 
 VALUES
-("Name", 1),
-("Description", 2),
-("How To Play", 2),
-("Game URL", 1),
-("Main Picture", 3),
-("Picture 1", 3),
-("Picture 2", 3),
-("Submission zip", 4);
+("Name", 1, NULL),
+("Description", 2, "No room left for improvement"),
+("How To Play", 2, "arrow keys to move, space bar to be awesome"),
+("Game URL", 1, "https://bestgameever.link"),
+("Main Picture", 3, NULL),
+("Picture 1", 3, NULL),
+("Picture 2", 3, NULL),
+("Submission zip", 4, NULL);
