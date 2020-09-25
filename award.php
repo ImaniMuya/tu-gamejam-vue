@@ -14,14 +14,10 @@ $conn = get_db_connection();
 
 // GET
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
-  $sql = $conn->prepare("SELECT award, award_id, team_id FROM awards");
-  if (!$sql->execute()) {
-    http_response_code(500);
-    die("Failed while getting awards.");
-  }
-  
+  $awards = getAwards($conn);
+
   http_response_code(200);
-  die_JSON($sql->fetchAll(PDO::FETCH_ASSOC));
+  die_JSON($awards);
 }
 
 //POST
