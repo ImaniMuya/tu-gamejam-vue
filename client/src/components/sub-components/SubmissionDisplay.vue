@@ -1,5 +1,5 @@
 <template>
-  <div class="outer">
+  <div class="outer" :id="team.id+'-'+team.name">
     <h2 v-if="gameName" class="game-heading">{{ gameName }}</h2>
     <h2 v-else-if="submission" class="game-heading">(untitled)</h2>
     <div class="display-row">
@@ -35,13 +35,11 @@ export default {
   name: "SubmissionDisplay",
   components: { ImageCarousel },
   props: ["submission", "team", "pastEvent"],
-  data() {
-    return {
-      imgSrcs: [],
-      displayFields: [],
-      gameName: "",
-    }
-  },
+  data: () => ({
+    imgSrcs: [],
+    displayFields: [],
+    gameName: "",
+  }),
   mounted() {
     if (this.submission == null) return;
     this.imgSrcs = [

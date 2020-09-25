@@ -70,7 +70,7 @@ function getTeamMemberDictionary($conn) {
 }
 
 /**
- * returns array like [
+ * returns array of teams like [
  *    "id" => 1,
  *    "name" => "string",
  *    "members" => ["string", "string"]
@@ -78,7 +78,6 @@ function getTeamMemberDictionary($conn) {
  */
 function getTeamsWithMembers($conn) {
   $teamsDict = getTeamNameDictionary($conn);
-
   $members = getTeamMemberDictionary($conn);
 
   $teams = [];
@@ -90,6 +89,20 @@ function getTeamsWithMembers($conn) {
     ];
   }
   return $teams;
+}
+
+/**
+  * returns array of awards like [
+  *    "award_id" => 1,
+  *    "award" => "string",
+  *    "team_id" => 1
+  * ]
+  */
+function getAwards($conn) {
+  $sql = $conn->prepare("SELECT award, award_id, team_id FROM awards");
+  if (!$sql->execute()) die_error("Failed while getting awards.");
+  $awards = $sql->fetchAll(PDO::FETCH_ASSOC);
+  return $awards;
 }
 
 
@@ -112,6 +125,7 @@ function getEventData($conn) { //TODO: separate file for sql calls
     $answers[$tid] = $teamAnswers;
   }
   
+  //sort by submission status
   $teams = getTeamsWithMembers($conn);
   $submissionlessTeams = [];
   foreach ($teams as $i => $team) {
@@ -122,8 +136,15 @@ function getEventData($conn) { //TODO: separate file for sql calls
     }
   }
   $teams = array_merge($teams, $submissionlessTeams);
+
+  $awards = getAwards($conn);
+
   http_response_code(200);
-  return ["answers" => $answers, "teams" => $teams];
+  return [
+    "answers" => $answers,
+    "teams" => $teams,
+    "awards" => $awards
+  ];
 }
 
 ?>

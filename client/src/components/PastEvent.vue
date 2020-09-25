@@ -1,7 +1,7 @@
 <template>
   <div>
-    <!-- <page-header>{{title ? title : eventName}}</page-header> -->
-    <page-header>{{ title }}</page-header>
+    <page-header :msg="eventName">{{ title }}</page-header>
+    <!-- <page-header>{{ title }}</page-header> -->
     <loader id="page-loader" v-if="loading" :circlesNum="5"/>    
     <event v-else :pastEvent="eventName" :submissions="submissions" :teams="teams" />
   </div>
@@ -42,6 +42,7 @@ export default {
         this.title = response.title;
         this.submissions = response.answers;
         this.teams = response.teams;
+        //TODO
       })
       .catch(err => this.$emit("warn", err))
       .finally(() => this.loading = false)

@@ -5,7 +5,9 @@
     <event 
       @toast="$emit('toast', $event)"
       @warn="$emit('warn', $event)"
-      :submissions="submissions" :teams="teams" 
+      :submissions="submissions"
+      :teams="teams"
+      :awards="awards"
     />
   </div>
 </template>
@@ -21,6 +23,7 @@ export default {
     return {
       submissions: {},
       teams: [],
+      awards: [],
     }
   },
   created() {
@@ -29,10 +32,12 @@ export default {
     .then(response => {
       this.submissions = response.answers;
       this.teams = response.teams;
+      this.awards = response.awards;
     })
     .catch(err => this.$emit("warn", err))
     .finally(() => this.loading = false);
   },
+  //TODO: create getEventData method to mirror PastEvent's
 };
 </script>
 
