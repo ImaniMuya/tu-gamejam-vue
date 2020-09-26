@@ -56,11 +56,11 @@
 import PageHeader from "./sub-components/PageHeader";
 import ThemeGrid from './sub-components/ThemeGrid.vue';
 import AwardGrid from './sub-components/AwardGrid.vue';
-import Timecode from './sub-components/Timecode.vue';
+// import Timecode from './sub-components/Timecode.vue';
 import { serverURL } from "@/constants";
 export default {
   name: "Admin",
-  components: { PageHeader, Timecode, ThemeGrid, AwardGrid },
+  components: { PageHeader, ThemeGrid, AwardGrid },
   data() {
     return {
       eventName: "",

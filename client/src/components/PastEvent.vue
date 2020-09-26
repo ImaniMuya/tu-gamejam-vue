@@ -3,7 +3,12 @@
     <page-header :msg="eventName">{{ title }}</page-header>
     <!-- <page-header>{{ title }}</page-header> -->
     <loader id="page-loader" v-if="loading" :circlesNum="5"/>    
-    <event v-else :pastEvent="eventName" :submissions="submissions" :teams="teams" />
+    <event v-else
+      :pastEvent="eventName"
+      :submissions="submissions"
+      :teams="teams"
+      :awards="awards"
+    />
   </div>
 </template>
 
@@ -21,6 +26,7 @@ export default {
       title: "",
       submissions: {},
       teams: [],
+      awards: [],
       eventName: "",
       loading: false
     }
@@ -29,7 +35,7 @@ export default {
     this.eventName = this.$route.params.eventName
     this.getEventData(this.eventName)
   },
-  beforeRouteUpdate(to, from, next) { //breaks reactivity (figure this out to remove :key hack in App.vue)
+  beforeRouteUpdate(to, from, next) { //breaks reactivity (figure this out to fix award links)
     this.eventName = to.params.eventName;
     this.getEventData(to.params.eventName);
     next();
@@ -42,6 +48,7 @@ export default {
         this.title = response.title;
         this.submissions = response.answers;
         this.teams = response.teams;
+        this.awards = response.awards;
         //TODO
       })
       .catch(err => this.$emit("warn", err))

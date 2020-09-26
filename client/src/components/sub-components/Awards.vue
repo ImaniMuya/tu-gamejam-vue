@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div v-if="awards.length">
+    <!-- TODO hide awards exist but no awards assigned -->
     <h2 class="winner-heading">GAME JAM WINNERS!</h2>
     <div>
        <template v-for="(award, index) in awards">

@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   }
 
   $eventData = getEventData($conn);
+  
   foreach ($body as $key => $value) {
     $eventData[$key] = $value;
   }
@@ -45,13 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
   mkdir("$eventDir/files");
   if (!rename("./files/", "./past/$event/files")) {
-    http_response_code(400);
+    http_response_code(500);
     die("Failed while moving files.");
   }
   mkdir("./files/");
 
   if (!copy("./sql/current.db", "./past/$event/data.db")) { //maybe unnecessary (already have json)
-    http_response_code(400);
+    http_response_code(500);
     die("Failed while moving db.");
   }
 
