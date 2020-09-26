@@ -1,9 +1,9 @@
 <template>
   <div>
     <page-header>Resources</page-header>
-    <div class="flex_col">
-      <div class="content flex_left">
-        <p>Below are a few helpful resources</p>
+    <div class="resources-layout">
+      <div class="resources-content">
+        <h2>Below are a few helpful resources</h2>
         <ul>
           <li>
             Themes
@@ -592,5 +592,17 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.resources-layout {
+  font-size: 24px;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  width: 100%;
+}
+
+.resources-content {
+  max-width: 50rem;
+}
+
 </style>

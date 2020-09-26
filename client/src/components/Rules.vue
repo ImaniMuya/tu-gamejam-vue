@@ -1,11 +1,11 @@
 <template>
   <div>
     <page-header msg="Follow them!">Rules</page-header>
-    <div class="flex_col">
-      <div class="content flex_left">
+    <div class="rules-layout">
+      <div class="content">
         <p>Below are the rules of Game Jam</p>
         <p>Contact <a href="mailto://jon.denning@taylor.edu">Dr. Denning</a> if you have any questions!</p>
-        <ul>
+        <ul class="rules-list">
           <li>The GameJam is for Taylor University students and alumni only or by invitation.</li>
           <li>All game content must be created from scratch, except for music, sounds, and photos.  All used content must have appropriate license and be properly cited.</li>
           <li>Each team can have up to two programmers and an unlimited number of non-programming members. Non-programming members can help with audio, images, stories, levels, etc, but they may not write code or scripts or program the gaming engine.</li>
@@ -29,3 +29,28 @@ export default {
   components: {PageHeader}
 };
 </script>
+
+<style scoped>
+.rules-layout {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+.rules-list {
+  max-width: 50rem;
+}
+
+p {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+ul, li {
+  font-size: 24px;
+}
+
+.rules-list > * {
+  margin-bottom: .5em;
+}
+</style>
