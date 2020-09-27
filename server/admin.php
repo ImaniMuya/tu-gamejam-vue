@@ -65,10 +65,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   die_JSON($sessionId);
 }
 
-// TODO: only admin
 
 //change password
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+
+  if (!isAdmin($conn)) {
+    http_response_code(403);
+    die("Only Admin can change password.");
+  }
+
   $content = file_get_contents('php://input');
   $passwordHash = hash("sha256", $content + $pepper);
 
