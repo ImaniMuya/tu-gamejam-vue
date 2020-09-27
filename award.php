@@ -12,6 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 include_once("./helper.inc");
 $conn = get_db_connection();
 
+if (!isAdmin($conn)) {
+  http_response_code(403);
+  die("Only Admin can use awards endpoint.");
+}
+
 // GET
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
   $awards = getAwards($conn);

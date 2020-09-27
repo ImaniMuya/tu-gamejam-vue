@@ -9,14 +9,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   die();
 }
 
-// TODO
-// if (/* something */) {
-//   http_response_code(403);
-//   die("Admin only.");
-// }
 
 include_once("./helper.inc");
 $conn = get_db_connection();
+
+
+if (!isAdmin($conn)) {
+  http_response_code(403);
+  die("Only Admin can archive.");
+}
 
 // POST
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
