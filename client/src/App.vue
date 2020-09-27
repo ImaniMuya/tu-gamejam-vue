@@ -158,7 +158,7 @@ textarea {
   margin: 10px auto;
   padding: 4px;
   border-radius: 5px;
-  transition: all .2s ease-in-out;
+  cursor: pointer;
 }
 
 .row {

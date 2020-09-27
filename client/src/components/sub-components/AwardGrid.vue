@@ -73,7 +73,7 @@ export default {
   },
   created() {
     this.loadingAwards = true;
-    this.$http.get(serverURL + "/award.php")
+    this.$http.get(serverURL + "/award.php", {credentials: 'include'})
     .then(json => json.forEach(x => 
       this.awards.push(this.createAward(x))
     ))
@@ -118,7 +118,7 @@ export default {
       }
 
       award.saving = true;
-      this.$http.put(serverURL + "/award.php?id=" + award.id, {}, {
+      this.$http.put(serverURL + "/award.php?id=" + award.id, {credentials: 'include'}, {
         name: award.name,
         winner: award.winner
       })
@@ -146,7 +146,7 @@ export default {
       }
 
       this.addingAward = true;
-      this.$http.post(serverURL + "/award.php", {}, this.newAward)
+      this.$http.post(serverURL + "/award.php", {credentials: 'include'}, this.newAward)
       .then(dbAward => {
         this.awards.push(this.createAward(dbAward));
         this.newAward = "";

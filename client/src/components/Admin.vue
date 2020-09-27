@@ -16,7 +16,6 @@
       @warn="$emit('warn', $event)"
     />
 
-    
     <h2>Awards</h2>
     <award-grid :teams="teams"
       @toast="$emit('toast', $event)"
@@ -44,25 +43,8 @@
     </div>
     
     <h2>All teams</h2>
-    <div v-if="loadingTeams">Loading...</div> 
-    <div v-else id="teamGrid">
-      <template v-for="(team, id) in teams">
-        <div :key="id">
-          {{ id }}
-        </div>
-        <div :key="id+'login'">
-           <a :key="id+'-login'" :href="loginLink(id, team)">login as {{ team.name }}</a>
-        </div>
-        <div :key="id+'-name'">{{ team.name }}</div>
-        <ul :key="id+'-members'" class="members">
-          <li
-            class="member"
-            v-for="(member, idx) in team.members"
-            :key="idx"
-          >{{ member }}</li>
-        </ul>
-      </template>
-    </div>
+    <team-grid :teams="teams" />
+    
   </div>
 </template>
 
@@ -70,13 +52,14 @@
 import PageHeader from "./sub-components/PageHeader";
 import ThemeGrid from './sub-components/ThemeGrid.vue';
 import AwardGrid from './sub-components/AwardGrid.vue';
+import TeamGrid from './sub-components/TeamGrid.vue';
 // import Timecode from './sub-components/Timecode.vue';
 import { serverURL } from "@/constants";
 import sjcl from 'sjcl';
 
 export default {
   name: "Admin",
-  components: { PageHeader, ThemeGrid, AwardGrid },
+  components: { PageHeader, ThemeGrid, AwardGrid, TeamGrid },
   data() {
     return {
       eventName: "",
@@ -128,28 +111,24 @@ export default {
     },
 
     loadTeams() {
-      this.loadingTeams = true;
-      this.$http.get(serverURL + "/teams.php")
-      .then(json => {
-        json.forEach(team => {
-          this.$set(this.teams, team.id, {
-            name: team.name,
-            members: team.members,
-            secret: team.secret
+        this.loadingTeams = true;
+        this.$http.get(serverURL + "/teams.php", { credentials: 'include' })
+        .then(json => {
+          json.forEach(team => {
+            this.$set(this.teams, team.id, {
+              name: team.name,
+              members: team.members,
+              secret: team.secret
+            });
           });
-        });
-      })
-      .catch(err => this.$emit("warn", err))
-      .finally(() => this.loadingTeams = false);
-    },
-
-    loginLink(id, team) {
-      return `/login?t=${id}&s=${team.secret}`;
+        })
+        .catch(err => this.$emit("warn", err))
+        .finally(() => this.loadingTeams = false);
     },
 
     postArchive() {
       //TODO: front end validate that past name doesn't already exist... or a confirm window?
-      this.$http.post(serverURL + "/archive.php", {}, {
+      this.$http.post(serverURL + "/archive.php", { credentials: 'include' }, {
         name: this.eventName,
         title: this.eventTitle
       })
@@ -184,28 +163,5 @@ a {
 #archive-btn {
   display: inline-block;
   margin: 0 20px;
-}
-
-#teamGrid {
-  display: grid;
-  grid-template-columns: auto auto auto auto;
-  align-content: center;
-  justify-content: center;;
-  gap: 10px;
-  margin: 20px;
-}
-
-#teamGrid > ul.members {
-  margin: 0;
-  padding: 0;
-}
-
-#teamGrid > ul > li.member {
-  display: inline;
-  list-style-type: none;
-}
-
-#teamGrid > ul > li.member + li.member::before {
-  content: ", ";
 }
 </style>
