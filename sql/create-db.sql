@@ -65,6 +65,26 @@ CREATE TABLE subm_answers (
     FOREIGN KEY(team_id) REFERENCES teams(team_id)
 );
 
+
+DROP TABLE IF EXISTS admin_properties;
+CREATE TABLE admin_properties (
+    name TEXT,
+    value TEXT
+);
+
+DROP TABLE IF EXISTS admin_logins;
+CREATE TABLE admin_logins (
+    time TEXT,
+    failed BOOLEAN
+);
+
+INSERT INTO admin_properties (name, value)
+VALUES 
+("password_hash", ""),
+("current_session", ""),
+("session_start", ""),
+("one_time_pass", "");
+
 INSERT INTO teams (name, the_secret)
 VALUES 
 ("ed", 1234),
