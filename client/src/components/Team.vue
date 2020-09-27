@@ -56,7 +56,7 @@ export default {
     }
   },
 
-  created() { //TODO: should this be mounted?
+  mounted() {
     if (!this.$teamCookieExists) {
       this.$emit("warn", "You need to login first.")
       this.$router.push({ name: 'Home'});

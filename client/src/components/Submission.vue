@@ -42,7 +42,7 @@ export default {
       submission: [],
     }
   },  
-  created() {
+  mounted() {
     if (!this.$teamCookieExists) {
       this.$emit("warn", "You need to login first.")
       this.$router.push({ name: 'Home'});

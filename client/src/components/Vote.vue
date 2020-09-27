@@ -53,9 +53,9 @@ export default {
       dropSpot: null,
     }
   },
-  created() {
+  mounted() {
     if (!this.$teamCookieExists) {
-      this.$emit("warn", "You need to login first.")
+      this.$emit("warn", "You need to login first.");
       this.$router.push({ name: 'Home'});
       return;
     }

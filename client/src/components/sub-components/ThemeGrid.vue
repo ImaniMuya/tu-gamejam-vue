@@ -52,7 +52,7 @@ export default {
   },
   created() {
     this.loadingThemes = true;
-    this.$http.get(serverURL + "/theme.php")
+    this.$http.get(serverURL + "/theme.php", {credentials: "include"})
     .then(json => json.forEach(x => this.themes.push(this.createTheme(x))))
     .catch(err => this.$emit("warn", err))
     .finally(() => this.loadingThemes = false);
@@ -92,7 +92,7 @@ export default {
         return;
       }
       theme.saving = true;
-      this.$http.put(serverURL + "/theme.php?id=" + theme.id, {}, theme.name)
+      this.$http.put(serverURL + "/theme.php?id=" + theme.id, {credentials: "include"}, theme.name)
       .then(name => {
         theme.name = name;
         theme.editing = false;
@@ -105,7 +105,7 @@ export default {
     deleteTheme(theme) {
       if (!confirm(`Remove ${theme.name}?`)) return;
       theme.deleting = true;
-      this.$http.delete(serverURL + "/theme.php?id=" + theme.id, {})
+      this.$http.delete(serverURL + "/theme.php?id=" + theme.id, {credentials: "include"})
       .then(text => {
         this.$emit("toast", text);
         this.themes = this.themes.filter(x => x.id != theme.id);
@@ -121,7 +121,7 @@ export default {
       }
 
       this.addingTheme = true;
-      this.$http.post(serverURL + "/theme.php", {}, this.newTheme)
+      this.$http.post(serverURL + "/theme.php", {credentials: "include"}, this.newTheme)
       .then(theme => {
         this.themes.push(this.createTheme(theme));
         this.newTheme = "";

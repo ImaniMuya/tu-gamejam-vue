@@ -15,6 +15,22 @@ function get_db_connection() {
   return $conn;
 }
 
+function isAdmin($conn) {
+  $sql = $conn->prepare("SELECT name, value FROM admin_properties
+    WHERE name = 'current_session' OR name='session_start'");
+  $sql->execute();
+  $dict = $sql->fetchAll(PDO::FETCH_KEY_PAIR);
+  if (!$dict || !$dict["current_session"] || !$dict["session_start"]) return FALSE;
+  
+  if ($_COOKIE['gja'] != $dict["current_session"]) return FALSE;
+  
+  $sessionLength = 3*24*60*60;
+  $sessionEnd = strtotime($dict['session_start']) + $sessionLength;
+  if ($sessionEnd < time()) return FALSE;
+
+  return TRUE;
+}
+
 //return team or null if bad login
 function get_login_team($conn, $teamId, $secret) {
   $sql = $conn->prepare("SELECT name, team_id FROM teams
