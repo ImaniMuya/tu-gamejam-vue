@@ -17,17 +17,23 @@
         @popup="popupImage"
       />
     </div>
+    <gallery
+      v-if="galleryUrls && galleryUrls.length"
+      :urls="galleryUrls"
+      @popup="popupImage"
+    />
   </div>
 </template>
 
 <script>
 import SubmissionDisplay from '@/components/sub-components/SubmissionDisplay.vue';
 import Awards from './sub-components/Awards.vue';
+import Gallery from './sub-components/Gallery.vue';
 
 export default {
   name: "Event",
-  components: { SubmissionDisplay, Awards },
-  props: [ "submissions", "teams", "pastEvent", "awards"],
+  components: { SubmissionDisplay, Awards, Gallery },
+  props: [ "submissions", "teams", "pastEvent", "awards", "galleryUrls"],
   data() {
     return {
       modalTucked: true,

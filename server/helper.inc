@@ -121,6 +121,16 @@ function getAwards($conn) {
   return $awards;
 }
 
+function getGalleryUrls(){
+  if (!file_exists('./files/gallery')) {
+    mkdir('./files/gallery', 0777, true);
+  }
+
+  $urls = array_diff(scandir("./files/gallery"), array('..', '.'));
+  // return $urls;
+  return array_values($urls);
+}
+
 
 function getEventData($conn) { //TODO: separate file for sql calls
   // get answers
@@ -155,11 +165,14 @@ function getEventData($conn) { //TODO: separate file for sql calls
 
   $awards = getAwards($conn);
 
+  $gallery_urls = getGalleryUrls();
+
   http_response_code(200);
   return [
     "answers" => $answers,
     "teams" => $teams,
-    "awards" => $awards
+    "awards" => $awards,
+    "gallery_urls" => $gallery_urls
   ];
 }
 

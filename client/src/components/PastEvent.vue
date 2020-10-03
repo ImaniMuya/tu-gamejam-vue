@@ -8,6 +8,7 @@
       :submissions="submissions"
       :teams="teams"
       :awards="awards"
+      :galleryUrls="galleryUrls"
     />
   </div>
 </template>
@@ -27,6 +28,7 @@ export default {
       submissions: {},
       teams: [],
       awards: [],
+      galleryUrls: [],
       eventName: "",
       loading: false
     }
@@ -49,7 +51,9 @@ export default {
         this.submissions = response.answers;
         this.teams = response.teams;
         this.awards = response.awards;
-        //TODO
+        this.galleryUrls = response.gallery_urls && response.gallery_urls.map(
+          x => serverURL + `/past/${eventName}/files/gallery/${x}`
+        );
       })
       .catch(err => this.$emit("warn", err))
       .finally(() => this.loading = false)
