@@ -83,7 +83,7 @@ VALUES
 ("password_hash", ""),
 ("current_session", ""),
 ("session_start", ""),
-("one_time_pass", "");
+("one_time_pass", "qwer");
 
 INSERT INTO teams (name, the_secret)
 VALUES 

@@ -32,7 +32,7 @@
         <label for="event-title">Event Description</label>
         <input type="text" id="event-title" v-model="eventTitle" placeholder="GameJam Spring 2020" />
       </div>
-      <button id="archive-btn" class="submitbtn" @click="postArchive">Archive</button>
+      <button id="archive-btn" class="submitbtn" @click="postArchive" :disabled="archiving">Archive</button>
     </div>
     <h2>Password</h2>
     <div class="password-container">
@@ -68,6 +68,7 @@ export default {
       teams: {},
       newPassword: "",
       password: "",
+      archiving: false,
       isAdmin: false,
     }
   },
@@ -128,11 +129,17 @@ export default {
 
     postArchive() {
       //TODO: front end validate that past name doesn't already exist... or a confirm window?
+      this.archiving = true;
       this.$http.post(serverURL + "/archive.php", { credentials: 'include' }, {
         name: this.eventName,
         title: this.eventTitle
       })
-      .then(text => this.$emit("toast", text))
+      .then(text => {
+        this.archiving = false;
+        this.eventName = "";
+        this.eventTitle = "";
+        this.$emit("toast", text);
+      })
       .catch(err => this.$emit("warn", err))
     },
 
