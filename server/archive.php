@@ -59,9 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
   //reset db
   $query = file_get_contents("./sql/reset-db.sql");
-  if (!$conn->exec($query)) {
+  $reset_result = $conn->exec($query);
+  if ($reset_result === FALSE) {
     http_response_code(500);
-    die("Failed to reset db. Make sure to close all sqlite3 terminals.");
+    die("Failed to reset db. Everything else probably worked.");
   }
 
   http_response_code(201);

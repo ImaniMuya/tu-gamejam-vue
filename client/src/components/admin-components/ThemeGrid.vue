@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import Loader from './Loader.vue';
+import Loader from '../sub-components/Loader.vue';
 import { serverURL } from "../../constants";
 
 export default {

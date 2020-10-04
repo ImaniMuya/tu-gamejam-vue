@@ -23,17 +23,10 @@
     />
 
     <h2>Archive Event</h2>
-    <div class="row">
-      <div class="col">
-        <label for="event-name">Short Name for link</label>
-        <input type="text" id="event-name" v-model="eventName" placeholder="S2020" />
-      </div>
-      <div class="col">
-        <label for="event-title">Event Description</label>
-        <input type="text" id="event-title" v-model="eventTitle" placeholder="GameJam Spring 2020" />
-      </div>
-      <button id="archive-btn" class="submitbtn" @click="postArchive" :disabled="archiving">Archive</button>
-    </div>
+    <archiver
+      @toast="$emit('toast', $event)"
+      @warn="$emit('warn', $event)"
+    />
     <h2>Password</h2>
     <div class="password-container">
       <form @submit.prevent>
@@ -50,25 +43,23 @@
 
 <script>
 import PageHeader from "./sub-components/PageHeader";
-import ThemeGrid from './sub-components/ThemeGrid.vue';
-import AwardGrid from './sub-components/AwardGrid.vue';
-import TeamGrid from './sub-components/TeamGrid.vue';
+import ThemeGrid from './admin-components/ThemeGrid.vue';
+import AwardGrid from './admin-components/AwardGrid.vue';
+import TeamGrid from './admin-components/TeamGrid.vue';
+import Archiver from './admin-components/Archiver.vue';
 // import Timecode from './sub-components/Timecode.vue';
 import { serverURL } from "@/constants";
 import sjcl from 'sjcl';
 
 export default {
   name: "Admin",
-  components: { PageHeader, ThemeGrid, AwardGrid, TeamGrid },
+  components: { PageHeader, ThemeGrid, AwardGrid, TeamGrid, Archiver },
   data() {
     return {
-      eventName: "",
-      eventTitle: "",
       loadingTeams: false,
       teams: {},
       newPassword: "",
       password: "",
-      archiving: false,
       isAdmin: false,
     }
   },
@@ -127,22 +118,6 @@ export default {
         .finally(() => this.loadingTeams = false);
     },
 
-    postArchive() {
-      //TODO: front end validate that past name doesn't already exist... or a confirm window?
-      this.archiving = true;
-      this.$http.post(serverURL + "/archive.php", { credentials: 'include' }, {
-        name: this.eventName,
-        title: this.eventTitle
-      })
-      .then(text => {
-        this.archiving = false;
-        this.eventName = "";
-        this.eventTitle = "";
-        this.$emit("toast", text);
-      })
-      .catch(err => this.$emit("warn", err))
-    },
-
     updatePassword() {
       const pwBitArray = sjcl.hash.sha256.hash(this.newPassword)
       const pwHash = sjcl.codec.hex.fromBits(pwBitArray)
@@ -166,9 +141,4 @@ a {
   cursor: pointer;
 }
 
-
-#archive-btn {
-  display: inline-block;
-  margin: 0 20px;
-}
 </style>

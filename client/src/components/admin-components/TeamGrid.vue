@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Loader from './Loader.vue';
+import Loader from '../sub-components/Loader.vue';
 
 export default {
   name: "TeamGrid",
