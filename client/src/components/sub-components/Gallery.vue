@@ -5,8 +5,6 @@
         <path d="M20 0 L0 10 L20 20"/>
       </svg>
       <div class="gallery-inner" ref="galInner">
-        <loader v-if="false" />
-
         <img class="gallery-img"
           v-for="(url, i) in urls"
           :key="i"
@@ -23,12 +21,8 @@
 </template>
 
 <script>
-
-import Loader from './Loader.vue';
-
 export default {
   name: "Gallery",
-  components: { Loader },
   props: [ "urls" ],
 
   mounted() {window.vm = this;},
@@ -68,7 +62,7 @@ export default {
   border-radius: 15px;
   border: 1px solid var(--primcolor);
   box-shadow: 4px 4px 10px;
-  background-color: #BBB;
+  /* background-color: #BBB; */
 
 }
 
