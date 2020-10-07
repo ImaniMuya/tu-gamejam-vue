@@ -9,6 +9,7 @@
       :teams="teams"
       :awards="awards"
       :galleryUrls="galleryUrls"
+      :eventStatement="eventStatement"
     />
   </div>
 </template>
@@ -29,6 +30,7 @@ export default {
       teams: [],
       awards: [],
       galleryUrls: [],
+      eventStatement: "",
       eventName: "",
       loading: false
     }
@@ -54,6 +56,7 @@ export default {
         this.galleryUrls = response.gallery_urls && response.gallery_urls.map(
           x => serverURL + `/past/${eventName}/files/gallery/${x}`
         );
+        this.eventStatement = response.event_statement;
       })
       .catch(err => this.$emit("warn", err))
       .finally(() => this.loading = false)

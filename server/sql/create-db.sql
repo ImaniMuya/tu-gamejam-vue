@@ -72,6 +72,13 @@ CREATE TABLE admin_properties (
     value TEXT
 );
 
+
+DROP TABLE IF EXISTS event_properties;
+CREATE TABLE event_properties (
+    name TEXT,
+    value TEXT
+);
+
 DROP TABLE IF EXISTS admin_logins;
 CREATE TABLE admin_logins (
     time TEXT,
@@ -84,6 +91,11 @@ VALUES
 ("current_session", ""),
 ("session_start", ""),
 ("one_time_pass", "qwer");
+
+
+INSERT INTO event_properties (name, value)
+VALUES 
+("event_statement", "");
 
 INSERT INTO teams (name, the_secret)
 VALUES 

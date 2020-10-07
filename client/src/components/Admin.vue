@@ -22,6 +22,9 @@
       @warn="$emit('warn', $event)"
     />
 
+    <h2>Event Properties</h2>
+    <event-property-grid></event-property-grid>
+
     <h2>Archive Event</h2>
     <archiver
       @toast="$emit('toast', $event)"
@@ -46,6 +49,7 @@ import PageHeader from "./sub-components/PageHeader";
 import ThemeGrid from './admin-components/ThemeGrid.vue';
 import AwardGrid from './admin-components/AwardGrid.vue';
 import TeamGrid from './admin-components/TeamGrid.vue';
+import EventPropertyGrid from './admin-components/EventPropertyGrid.vue';
 import Archiver from './admin-components/Archiver.vue';
 // import Timecode from './sub-components/Timecode.vue';
 import { serverURL } from "@/constants";
@@ -53,7 +57,7 @@ import sjcl from 'sjcl';
 
 export default {
   name: "Admin",
-  components: { PageHeader, ThemeGrid, AwardGrid, TeamGrid, Archiver },
+  components: { PageHeader, ThemeGrid, AwardGrid, TeamGrid, EventPropertyGrid, Archiver },
   data() {
     return {
       loadingTeams: false,

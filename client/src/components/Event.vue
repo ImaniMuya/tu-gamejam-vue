@@ -3,6 +3,7 @@
     <div id="imgModal" :class="{tucked: modalTucked}" @click="modalTucked = true">
       <img :src="modalImgSrc"/>
     </div>
+    <div v-if="eventStatement" v-html="eventStatement" class="statement"></div>
     <awards
       :teams="teams"
       :awards="awards"
@@ -33,7 +34,7 @@ import Gallery from './sub-components/Gallery.vue';
 export default {
   name: "Event",
   components: { SubmissionDisplay, Awards, Gallery },
-  props: [ "submissions", "teams", "pastEvent", "awards", "galleryUrls"],
+  props: [ "submissions", "teams", "pastEvent", "awards", "galleryUrls", "eventStatement"],
   data() {
     return {
       modalTucked: true,
@@ -80,5 +81,9 @@ export default {
 #imgModal > img {
   max-width: 90vw;
   max-height: 90vh;
+}
+
+.statement {
+  text-align:center;
 }
 </style>
