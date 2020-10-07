@@ -127,10 +127,15 @@ function getGalleryUrls(){
   }
 
   $urls = array_diff(scandir("./files/gallery"), array('..', '.'));
-  // return $urls;
   return array_values($urls);
 }
 
+function getEventStatement($conn){
+  $sql = $conn->prepare("SELECT value FROM event_properties WHERE name = 'event_statement'");
+  if (!$sql->execute()) die_error("Failed while getting event statement.");
+  $result = $sql->fetch();
+  return $result[0];
+}
 
 function getEventData($conn) { //TODO: separate file for sql calls
   // get answers
@@ -167,12 +172,15 @@ function getEventData($conn) { //TODO: separate file for sql calls
 
   $gallery_urls = getGalleryUrls();
 
+  $event_statement = getEventStatement($conn);
+
   http_response_code(200);
   return [
     "answers" => $answers,
     "teams" => $teams,
     "awards" => $awards,
-    "gallery_urls" => $gallery_urls
+    "gallery_urls" => $gallery_urls,
+    "event_statement" => $event_statement
   ];
 }
 
