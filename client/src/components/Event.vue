@@ -84,6 +84,7 @@ export default {
 }
 
 .statement {
-  text-align:center;
+  max-width: 50rem;
+  margin: 25px auto;
 }
 </style>

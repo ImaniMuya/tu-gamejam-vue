@@ -18,6 +18,7 @@
 import PageHeader from './sub-components/PageHeader.vue';
 import Event from './Event.vue';
 import { serverURL } from "@/constants";
+import marked from 'marked';
 export default {
   name: "Home",
   components: { PageHeader, Event },
@@ -44,7 +45,7 @@ export default {
         this.galleryUrls = response.gallery_urls.map(
           x => serverURL + "/files/gallery/" + x
         );
-        this.eventStatement = response.event_statement;
+        this.eventStatement = marked(response.event_statement);
       })
       .catch(err => this.$emit("warn", err))
       .finally(() => this.loading = false);

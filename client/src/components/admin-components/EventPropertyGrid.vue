@@ -9,6 +9,7 @@
           v-model="property.value"
           :disabled="property.saving"
           rows="5"
+          cols="40"
         ></textarea>
 
         <div :key="property.name + 'btns'" class="btn-container">
