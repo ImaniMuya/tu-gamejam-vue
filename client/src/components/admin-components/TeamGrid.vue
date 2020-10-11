@@ -1,5 +1,5 @@
 <template>
-  <loader id="grid-loader" v-if="loadingTeams" :circlesNum="5"/>
+  <loader id="grid-loader" v-if="loading || deleting" :circlesNum="5"/>
   <div v-else id="teamGrid">
     <template v-for="(team, id) in teams">
       <div :key="id">
@@ -16,21 +16,23 @@
           :key="idx"
         >{{ member }}</li>
       </ul>
+      <img :key="id+'-delete'" class="icon" src="../../assets/delete.png" @click="deleteTeam(id)" alt="Delete" title="Remove"/>
     </template>
   </div>
 </template>
 
 <script>
+import { serverURL } from '../../constants';
 import Loader from '../sub-components/Loader.vue';
 
 export default {
   name: "TeamGrid",
   components: { Loader },
-  props: ['teams'],
+  props: ['teams', 'loading'],
 
   data() {
     return {
-      loadingTeams: false,
+      deleting: false,
     }
   },
 
@@ -38,6 +40,17 @@ export default {
     loginLink(id, team) {
       return `/login?t=${id}&s=${team.secret}`;
     },
+    deleteTeam(id) {
+      if (!confirm("Are you sure you want to delete team with ID " + id + "?")) return;
+      this.deleting = true;
+      this.$http.delete(serverURL + "/teams.php?id=" + id, {credentials: "include"})
+      .then(resp => this.$emit("toast", resp))
+      .catch(err => this.$emit("warn", err))
+      .finally(() => {
+        this.deleting = false;
+        this.$emit("reload");
+      });
+    }
   }
 }
 
@@ -47,7 +60,7 @@ export default {
 <style scoped>
 #teamGrid {
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: auto auto auto auto auto;
   align-content: center;
   justify-content: center;;
   gap: 10px;
@@ -66,5 +79,10 @@ li.member {
 
 li.member + li.member::before {
   content: ", ";
+}
+
+.icon {
+  width: 24px;
+  cursor: pointer;
 }
 </style>

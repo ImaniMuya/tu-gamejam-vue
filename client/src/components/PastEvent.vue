@@ -18,6 +18,7 @@
 import PageHeader from './sub-components/PageHeader.vue';
 import Event from './Event.vue';
 import Loader from '@/components/sub-components/Loader.vue';
+import marked from 'marked';
 import { serverURL } from "@/constants";
 
 export default {
@@ -56,7 +57,7 @@ export default {
         this.galleryUrls = response.gallery_urls && response.gallery_urls.map(
           x => serverURL + `/past/${eventName}/files/gallery/${x}`
         );
-        this.eventStatement = response.event_statement;
+        this.eventStatement = marked(response.event_statement);
       })
       .catch(err => this.$emit("warn", err))
       .finally(() => this.loading = false)

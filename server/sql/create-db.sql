@@ -99,9 +99,9 @@ VALUES
 
 INSERT INTO teams (name, the_secret)
 VALUES 
-("ed", 1234),
-("moni", 4321),
-("edrani", 5555);
+("ed's team", 1234),
+("Team 1", 4321),
+("Another One", 5555);
 
 INSERT INTO people (person_name, email, team_id)
 VALUES 

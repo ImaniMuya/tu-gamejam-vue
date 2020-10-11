@@ -13,13 +13,13 @@
     <h2>Theme Editor</h2>
     <theme-grid 
       @toast="$emit('toast', $event)"
-      @warn="$emit('warn', $event)"
+      @warn="handleError"
     />
 
     <h2>Awards</h2>
     <award-grid :teams="teams"
       @toast="$emit('toast', $event)"
-      @warn="$emit('warn', $event)"
+      @warn="handleError"
     />
 
     <h2>Event Properties</h2>
@@ -28,7 +28,7 @@
     <h2>Archive Event</h2>
     <archiver
       @toast="$emit('toast', $event)"
-      @warn="$emit('warn', $event)"
+      @warn="handleError"
     />
     <h2>Password</h2>
     <div class="password-container">
@@ -39,7 +39,11 @@
     </div>
     
     <h2>All teams</h2>
-    <team-grid :teams="teams" />
+    <team-grid :teams="teams" :loading="loadingTeams"
+      @toast="$emit('toast', $event)"
+      @warn="handleError"
+      @reload="loadTeams()"
+    />
     
   </div>
 </template>
@@ -93,6 +97,11 @@ export default {
       }
     },
 
+    handleError(e) {
+      if (e.status == 403) this.logout();
+      else this.$emit('warn', e);
+    },
+
     logout() {
       document.cookie = "gja=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
       this.$router.push({ name: 'Home'});
@@ -107,6 +116,7 @@ export default {
     },
 
     loadTeams() {
+        this.teams = {};
         this.loadingTeams = true;
         this.$http.get(serverURL + "/teams.php", { credentials: 'include' })
         .then(json => {

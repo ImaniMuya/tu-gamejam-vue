@@ -8,14 +8,15 @@ Object.defineProperty(Vue.prototype, '$teamCookieExists', {
   get: function() { return document.cookie.split(';').some(item => item.trim().startsWith("gjt=")); }
 });
 
-
 function standardResponseHandler(goodStatus) {
   return response => {
-    if (response.status == goodStatus) {
+    const status = response.status;
+    if (status == goodStatus) {
       if (response.headers.get("content-type") == "application/json") return response.json();
       else return response.text();
     }
-    return response.text().then(x => { throw x });
+
+    return response.text().then(text => { throw { text, status } });
   }
 }
 

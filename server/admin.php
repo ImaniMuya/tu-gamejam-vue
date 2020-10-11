@@ -55,7 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   $sql = $conn->prepare("UPDATE admin_properties 
-    SET value = datetime('now') WHERE name = 'session_start'");
+    SET value = :login_time WHERE name = 'session_start'");
+  $sql->bindValue(':login_time', time());
   if (!$sql->execute()) {
     http_response_code(500);
     die("Failed while starting session.");

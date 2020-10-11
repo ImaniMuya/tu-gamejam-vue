@@ -25,7 +25,7 @@ function isAdmin($conn) {
   if ($_COOKIE['gja'] != $dict["current_session"]) return FALSE;
   
   $sessionLength = 3*24*60*60;
-  $sessionEnd = strtotime($dict['session_start']) + $sessionLength;
+  $sessionEnd = $dict['session_start'] + $sessionLength;
   if ($sessionEnd < time()) return FALSE;
 
   return TRUE;
