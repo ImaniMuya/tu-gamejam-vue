@@ -81,7 +81,7 @@ CREATE TABLE event_properties (
 
 DROP TABLE IF EXISTS admin_logins;
 CREATE TABLE admin_logins (
-    time TEXT,
+    time INTEGER,
     failed BOOLEAN
 );
 

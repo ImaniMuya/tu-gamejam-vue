@@ -116,6 +116,7 @@ export default {
   justify-items: center;
   margin: 15px;
   margin-left: 75px;
+  gap: 10px;
 }
 
 .btn-container {
