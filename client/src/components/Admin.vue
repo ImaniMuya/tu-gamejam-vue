@@ -85,8 +85,8 @@ export default {
       try {
         const pwBitArray = sjcl.hash.sha256.hash(this.password);
         const pwHash = sjcl.codec.hex.fromBits(pwBitArray);
-        this.password = ""
-        let sessionId = await this.$http.post(serverURL + "/admin.php", {}, pwHash) //TODO: hash before sending
+        this.password = "";
+        let sessionId = await this.$http.post(serverURL + "/admin.php", {}, pwHash);
         document.cookie = `gja=${sessionId}; expires=${this.getFutureTimestamp(3)}`;
         this.isAdmin = true;
         this.loadTeams();

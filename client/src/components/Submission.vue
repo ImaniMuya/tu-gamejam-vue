@@ -1,5 +1,6 @@
 <template>
   <div>
+    <timeline />
     <page-header :msg="team.name">Submit Your Game!</page-header>
     <loader v-if="loading" id="page-loader" :circlesNum="5"/>
     <template v-else>
@@ -26,6 +27,7 @@
 </template>
 
 <script>
+import Timeline from "./sub-components/Timeline";
 import PageHeader from "./sub-components/PageHeader";
 import Loader from "./sub-components/Loader";
 import SubmissionInput from "./sub-components/SubmissionInput";
@@ -33,7 +35,7 @@ import { serverURL } from "../constants";
 
 export default {
   name: "Submission",
-  components: { PageHeader, Loader, SubmissionInput },
+  components: { PageHeader, Loader, SubmissionInput, Timeline },
   props: ["team"],
   data() {
     return {

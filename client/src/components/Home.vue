@@ -1,5 +1,6 @@
 <template>
   <div>
+    <timeline />
     <page-header>CSE GameJam</page-header>
     <div><router-link :to="'/register'">register</router-link></div>
     <event 
@@ -16,12 +17,13 @@
 
 <script>
 import PageHeader from './sub-components/PageHeader.vue';
+import Timeline from './sub-components/Timeline.vue';
 import Event from './Event.vue';
 import { serverURL } from "@/constants";
 import marked from 'marked';
 export default {
   name: "Home",
-  components: { PageHeader, Event },
+  components: { PageHeader, Event, Timeline },
   data() {
     return {
       submissions: {},

@@ -5,12 +5,20 @@
       <div :key="property.name">{{ property.name }}</div>
       <template v-if="property.editing">
         <textarea
+          v-if="property.name=='event_statement'"
           :key="property.name + '-input'"
           v-model="property.value"
           :disabled="property.saving"
           rows="5"
           cols="40"
         ></textarea>
+        <input
+          v-else-if="property.name.indexOf('time') >= 0"
+          type="datetime-local"
+          :key="property.name + '-input'"
+          v-model="property.value"
+          :disabled="property.saving"
+        />
 
         <div :key="property.name + 'btns'" class="btn-container">
           <loader v-if="property.saving" :circlesNum="1" />

@@ -95,7 +95,9 @@ VALUES
 
 INSERT INTO event_properties (name, value)
 VALUES 
-("event_statement", "");
+("event_statement", ""),
+("start_time", ""),
+("end_time", "");
 
 INSERT INTO teams (name, the_secret)
 VALUES 
