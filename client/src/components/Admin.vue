@@ -13,27 +13,23 @@
     <h2>Theme Editor</h2>
     <theme-grid 
       @toast="$emit('toast', $event)"
-      @warn="$emit('warn', $event)"
+      @warn="handleError"
     />
 
     <h2>Awards</h2>
     <award-grid :teams="teams"
       @toast="$emit('toast', $event)"
-      @warn="$emit('warn', $event)"
+      @warn="handleError"
     />
 
+    <h2>Event Properties</h2>
+    <event-property-grid></event-property-grid>
+
     <h2>Archive Event</h2>
-    <div class="row">
-      <div class="col">
-        <label for="event-name">Short Name for link</label>
-        <input type="text" id="event-name" v-model="eventName" placeholder="S2020" />
-      </div>
-      <div class="col">
-        <label for="event-title">Event Description</label>
-        <input type="text" id="event-title" v-model="eventTitle" placeholder="GameJam Spring 2020" />
-      </div>
-      <button id="archive-btn" class="submitbtn" @click="postArchive">Archive</button>
-    </div>
+    <archiver
+      @toast="$emit('toast', $event)"
+      @warn="handleError"
+    />
     <h2>Password</h2>
     <div class="password-container">
       <form @submit.prevent>
@@ -43,27 +39,31 @@
     </div>
     
     <h2>All teams</h2>
-    <team-grid :teams="teams" />
+    <team-grid :teams="teams" :loading="loadingTeams"
+      @toast="$emit('toast', $event)"
+      @warn="handleError"
+      @reload="loadTeams()"
+    />
     
   </div>
 </template>
 
 <script>
 import PageHeader from "./sub-components/PageHeader";
-import ThemeGrid from './sub-components/ThemeGrid.vue';
-import AwardGrid from './sub-components/AwardGrid.vue';
-import TeamGrid from './sub-components/TeamGrid.vue';
+import ThemeGrid from './admin-components/ThemeGrid.vue';
+import AwardGrid from './admin-components/AwardGrid.vue';
+import TeamGrid from './admin-components/TeamGrid.vue';
+import EventPropertyGrid from './admin-components/EventPropertyGrid.vue';
+import Archiver from './admin-components/Archiver.vue';
 // import Timecode from './sub-components/Timecode.vue';
 import { serverURL } from "@/constants";
 import sjcl from 'sjcl';
 
 export default {
   name: "Admin",
-  components: { PageHeader, ThemeGrid, AwardGrid, TeamGrid },
+  components: { PageHeader, ThemeGrid, AwardGrid, TeamGrid, EventPropertyGrid, Archiver },
   data() {
     return {
-      eventName: "",
-      eventTitle: "",
       loadingTeams: false,
       teams: {},
       newPassword: "",
@@ -84,9 +84,9 @@ export default {
     async signIn() {
       try {
         const pwBitArray = sjcl.hash.sha256.hash(this.password);
-        const pwHash = sjcl.codec.hex.fromBits(pwBitArray)
-        this.password = ""
-        let sessionId = await this.$http.post(serverURL + "/admin.php", {}, pwHash) //TODO: hash before sending
+        const pwHash = sjcl.codec.hex.fromBits(pwBitArray);
+        this.password = "";
+        let sessionId = await this.$http.post(serverURL + "/admin.php", {}, pwHash);
         document.cookie = `gja=${sessionId}; expires=${this.getFutureTimestamp(3)}`;
         this.isAdmin = true;
         this.loadTeams();
@@ -95,6 +95,11 @@ export default {
         this.$router.push({ name: 'Home'});
         return;
       }
+    },
+
+    handleError(e) {
+      if (e.status == 403) this.logout();
+      else this.$emit('warn', e);
     },
 
     logout() {
@@ -111,6 +116,7 @@ export default {
     },
 
     loadTeams() {
+        this.teams = {};
         this.loadingTeams = true;
         this.$http.get(serverURL + "/teams.php", { credentials: 'include' })
         .then(json => {
@@ -124,16 +130,6 @@ export default {
         })
         .catch(err => this.$emit("warn", err))
         .finally(() => this.loadingTeams = false);
-    },
-
-    postArchive() {
-      //TODO: front end validate that past name doesn't already exist... or a confirm window?
-      this.$http.post(serverURL + "/archive.php", { credentials: 'include' }, {
-        name: this.eventName,
-        title: this.eventTitle
-      })
-      .then(text => this.$emit("toast", text))
-      .catch(err => this.$emit("warn", err))
     },
 
     updatePassword() {
@@ -159,9 +155,4 @@ a {
   cursor: pointer;
 }
 
-
-#archive-btn {
-  display: inline-block;
-  margin: 0 20px;
-}
 </style>

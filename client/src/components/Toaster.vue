@@ -35,7 +35,9 @@ export default {
     },
     warnToast(msg, duration) {
       this.warn = true;
-      this.showMsg(msg, duration);
+      let text = msg.text ?? msg ?? "null error";
+      this.showMsg(text, duration);
+      console.error("Toast Error: ", msg);
     },
     toast(msg, duration) {
       this.warn = false;

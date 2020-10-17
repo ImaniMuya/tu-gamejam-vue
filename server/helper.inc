@@ -25,7 +25,7 @@ function isAdmin($conn) {
   if ($_COOKIE['gja'] != $dict["current_session"]) return FALSE;
   
   $sessionLength = 3*24*60*60;
-  $sessionEnd = strtotime($dict['session_start']) + $sessionLength;
+  $sessionEnd = $dict['session_start'] + $sessionLength;
   if ($sessionEnd < time()) return FALSE;
 
   return TRUE;
@@ -121,6 +121,21 @@ function getAwards($conn) {
   return $awards;
 }
 
+function getGalleryUrls(){
+  if (!file_exists('./files/gallery')) {
+    mkdir('./files/gallery', 0777, true);
+  }
+
+  $urls = array_diff(scandir("./files/gallery"), array('..', '.'));
+  return array_values($urls);
+}
+
+function getEventStatement($conn){
+  $sql = $conn->prepare("SELECT value FROM event_properties WHERE name = 'event_statement'");
+  if (!$sql->execute()) die_error("Failed while getting event statement.");
+  $result = $sql->fetch();
+  return $result[0];
+}
 
 function getEventData($conn) { //TODO: separate file for sql calls
   // get answers
@@ -155,11 +170,17 @@ function getEventData($conn) { //TODO: separate file for sql calls
 
   $awards = getAwards($conn);
 
+  $gallery_urls = getGalleryUrls();
+
+  $event_statement = getEventStatement($conn);
+
   http_response_code(200);
   return [
     "answers" => $answers,
     "teams" => $teams,
-    "awards" => $awards
+    "awards" => $awards,
+    "gallery_urls" => $gallery_urls,
+    "event_statement" => $event_statement
   ];
 }
 

@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import Loader from './Loader.vue';
+import Loader from '../sub-components/Loader.vue';
 import { serverURL } from "../../constants";
 export default {
   name: "AwardGrid",
@@ -74,8 +74,8 @@ export default {
   created() {
     this.loadingAwards = true;
     this.$http.get(serverURL + "/award.php", {credentials: 'include'})
-    .then(json => json.forEach(x => 
-      this.awards.push(this.createAward(x))
+    .then(json => json.forEach(dbAward => 
+      this.awards.push(this.createAward(dbAward))
     ))
     .catch(err => this.$emit("warn", err))
     .finally(() => this.loadingAwards = false);

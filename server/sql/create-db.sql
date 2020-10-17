@@ -72,9 +72,16 @@ CREATE TABLE admin_properties (
     value TEXT
 );
 
+
+DROP TABLE IF EXISTS event_properties;
+CREATE TABLE event_properties (
+    name TEXT,
+    value TEXT
+);
+
 DROP TABLE IF EXISTS admin_logins;
 CREATE TABLE admin_logins (
-    time TEXT,
+    time INTEGER,
     failed BOOLEAN
 );
 
@@ -83,13 +90,20 @@ VALUES
 ("password_hash", ""),
 ("current_session", ""),
 ("session_start", ""),
-("one_time_pass", "");
+("one_time_pass", "qwer");
+
+
+INSERT INTO event_properties (name, value)
+VALUES 
+("event_statement", ""),
+("start_time", ""),
+("end_time", "");
 
 INSERT INTO teams (name, the_secret)
 VALUES 
-("ed", 1234),
-("moni", 4321),
-("edrani", 5555);
+("ed's team", 1234),
+("Team 1", 4321),
+("Another One", 5555);
 
 INSERT INTO people (person_name, email, team_id)
 VALUES 

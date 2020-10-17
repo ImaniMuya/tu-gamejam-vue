@@ -8,6 +8,8 @@
       :submissions="submissions"
       :teams="teams"
       :awards="awards"
+      :galleryUrls="galleryUrls"
+      :eventStatement="eventStatement"
     />
   </div>
 </template>
@@ -16,6 +18,7 @@
 import PageHeader from './sub-components/PageHeader.vue';
 import Event from './Event.vue';
 import Loader from '@/components/sub-components/Loader.vue';
+import marked from 'marked';
 import { serverURL } from "@/constants";
 
 export default {
@@ -27,6 +30,8 @@ export default {
       submissions: {},
       teams: [],
       awards: [],
+      galleryUrls: [],
+      eventStatement: "",
       eventName: "",
       loading: false
     }
@@ -49,7 +54,10 @@ export default {
         this.submissions = response.answers;
         this.teams = response.teams;
         this.awards = response.awards;
-        //TODO
+        this.galleryUrls = response.gallery_urls && response.gallery_urls.map(
+          x => serverURL + `/past/${eventName}/files/gallery/${x}`
+        );
+        this.eventStatement = marked(response.event_statement);
       })
       .catch(err => this.$emit("warn", err))
       .finally(() => this.loading = false)
