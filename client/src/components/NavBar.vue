@@ -25,9 +25,9 @@
           <span>{{ team.name }}</span>
         </router-link>
       </span>
-      <span class="navlink" @click="tucked = true">
+      <!-- <span class="navlink" @click="tucked = true">
         <router-link :to="{ name: 'Vote' }">Vote</router-link>
-      </span>
+      </span> -->
       <span class="navlink" @click="tucked = true">
         <router-link :to="{ name: 'Submission' }">Submission</router-link>
       </span>

@@ -5,7 +5,7 @@ import Rules from '@/components/Rules'
 import Resources from '@/components/Resources'
 import Register from '@/components/Register'
 import Team from '@/components/Team'
-import Vote from '@/components/Vote'
+// import Vote from '@/components/Vote'
 import Admin from '@/components/Admin'
 import Submission from '@/components/Submission'
 import PastEvent from '@/components/PastEvent'
@@ -45,11 +45,11 @@ const routes = [
     name: 'Team',
     component: Team
   },
-  {
-    path: '/vote',
-    name: 'Vote',
-    component: Vote
-  },
+  // {
+  //   path: '/vote',
+  //   name: 'Vote',
+  //   component: Vote
+  // },
   {
     path: '/submission',
     name: 'Submission',
