@@ -99,17 +99,17 @@ VALUES
 ("start_time", ""),
 ("end_time", "");
 
-INSERT INTO teams (name, the_secret)
-VALUES 
-("ed's team", 1234),
-("Team 1", 4321),
-("Another One", 5555);
+-- INSERT INTO teams (name, the_secret)
+-- VALUES 
+-- ("ed's team", 1234),
+-- ("Team 1", 4321),
+-- ("Another One", 5555);
 
-INSERT INTO people (person_name, email, team_id)
-VALUES 
-("Joey", "how@you.doing" , 1),
-("Monica", "ok@friends.com" , 2),
-("Ross", "hi@friends.com" , 3);
+-- INSERT INTO people (person_name, email, team_id)
+-- VALUES 
+-- ("Joey", "how@you.doing" , 1),
+-- ("Monica", "ok@friends.com" , 2),
+-- ("Ross", "hi@friends.com" , 3);
 
 INSERT INTO themes (theme) 
 VALUES

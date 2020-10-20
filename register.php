@@ -1,6 +1,7 @@
 <?php
-
-header('Access-Control-Allow-Origin: *');
+include_once("./constants.inc");
+header("Access-Control-Allow-Origin: $clientOrigin");
+header("Access-Control-Allow-Methods: OPTIONS, POST");
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
