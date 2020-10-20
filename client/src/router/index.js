@@ -16,7 +16,7 @@ Vue.use(Router)
 //TODO: check cookie in router.beforeEach?
 const routes = [
   {
-    path: '/',
+    path: '',
     name: 'Home',
     component: Home
   },
@@ -74,7 +74,7 @@ const routes = [
 ]
 
 const router = new Router({
-  mode: 'history',
+  base: "/~gamejamdev",
   routes
 })
 router.beforeEach((to, _, next) => {
