@@ -26,8 +26,8 @@ export default {
     }
     
     sessionStorage.removeItem("team");
-    document.cookie = `gjt=${teamId}; expires=${this.getFutureTimestamp(3)}`;
-    document.cookie = `gjs=${secret}; expires=${this.getFutureTimestamp(3)}`;
+    document.cookie = `gjt=${teamId}; expires=${this.getFutureTimestamp(3)}; path=/`;
+    document.cookie = `gjs=${secret}; expires=${this.getFutureTimestamp(3)}; path=/`;
     this.$emit("login");
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <page-header>Resources</page-header>
-    <pre class="md" ref="md">  
+    <pre class="md" ref="md">
 ## Below are a few helpful resources
 * Themes
   * [Random Game Jam Theme Generator](https://cjanssen.bitbucket.io/themegen/)

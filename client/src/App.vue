@@ -50,8 +50,8 @@ export default {
         this.toast("Logged into team: " + json.name);
       })
       .catch(err => {
-        document.cookie = `gjt= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-        document.cookie = `gjs= ; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        document.cookie = `gjt= ; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+        document.cookie = `gjs= ; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
         sessionStorage.removeItem("team");
         this.warn(err);
       });

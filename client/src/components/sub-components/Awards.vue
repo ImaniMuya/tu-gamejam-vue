@@ -1,5 +1,5 @@
 <template>
-  <div v-if="awards.length">
+  <div v-if="awards && awards.length > 0">
     <!-- TODO hide awards exist but no awards assigned -->
     <h2 class="winner-heading">GAME JAM WINNERS!</h2>
     <div>

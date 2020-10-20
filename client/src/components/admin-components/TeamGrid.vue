@@ -6,7 +6,7 @@
         {{ id }}
       </div>
       <div :key="id+'login'">
-          <a :key="id+'-login'" :href="loginLink(id, team)">login as {{ team.name }}</a>
+        <router-link :to="loginLocation(id, team)">login as {{ team.name }}</router-link>
       </div>
       <div :key="id+'-name'">{{ team.name }}</div>
       <ul :key="id+'-members'" class="members">
@@ -37,8 +37,9 @@ export default {
   },
 
   methods: {
-    loginLink(id, team) {
-      return `/login?t=${id}&s=${team.secret}`;
+    loginLocation(id, team) {
+      let location = { path: "/login", query: { t: id, s: team.secret} }
+      return location;
     },
     deleteTeam(id) {
       if (!confirm("Are you sure you want to delete team with ID " + id + "?")) return;

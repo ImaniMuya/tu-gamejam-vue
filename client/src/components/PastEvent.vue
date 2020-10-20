@@ -57,7 +57,7 @@ export default {
         this.galleryUrls = response.gallery_urls && response.gallery_urls.map(
           x => serverURL + `/past/${eventName}/files/gallery/${x}`
         );
-        this.eventStatement = marked(response.event_statement);
+        this.eventStatement = response.event_statement && marked(response.event_statement);
       })
       .catch(err => this.$emit("warn", err))
       .finally(() => this.loading = false)

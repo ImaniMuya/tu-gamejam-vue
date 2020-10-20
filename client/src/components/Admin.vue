@@ -7,44 +7,44 @@
   </div>
   <div v-else>
     <page-header>Admin</page-header>
-    <a @click="logout">Logout</a>
-    <h2>Schedule</h2>
+    <div class="content">
+      <a @click="logout">Logout</a>
+      <h2>Schedule</h2>
 
-    <h2>Theme Editor</h2>
-    <theme-grid 
-      @toast="$emit('toast', $event)"
-      @warn="handleError"
-    />
+      <h2>Theme Editor</h2>
+      <theme-grid 
+        @toast="$emit('toast', $event)"
+        @warn="handleError"
+      />
 
-    <h2>Awards</h2>
-    <award-grid :teams="teams"
-      @toast="$emit('toast', $event)"
-      @warn="handleError"
-    />
+      <h2>Awards</h2>
+      <award-grid :teams="teams"
+        @toast="$emit('toast', $event)"
+        @warn="handleError"
+      />
 
-    <h2>Event Properties</h2>
-    <event-property-grid></event-property-grid>
+      <h2>Event Properties</h2>
+      <event-property-grid></event-property-grid>
 
-    <h2>Archive Event</h2>
-    <archiver
-      @toast="$emit('toast', $event)"
-      @warn="handleError"
-    />
-    <h2>Password</h2>
-    <div class="password-container">
-      <form @submit.prevent>
-        <input type="password" v-model="newPassword" />
-        <button id="password-btn" @click="updatePassword">Change Password</button>
-      </form>
+      <h2>Archive Event</h2>
+      <archiver
+        @toast="$emit('toast', $event)"
+        @warn="handleError"
+      />
+      <h2>Password</h2>
+      <div class="password-container">
+        <form @submit.prevent>
+          <input type="password" v-model="newPassword" />
+          <button id="password-btn" @click="updatePassword">Change Password</button>
+        </form>
+      </div>
+      <h2>All teams</h2>
+      <team-grid :teams="teams" :loading="loadingTeams"
+        @toast="$emit('toast', $event)"
+        @warn="handleError"
+        @reload="loadTeams()"
+      />
     </div>
-    
-    <h2>All teams</h2>
-    <team-grid :teams="teams" :loading="loadingTeams"
-      @toast="$emit('toast', $event)"
-      @warn="handleError"
-      @reload="loadTeams()"
-    />
-    
   </div>
 </template>
 
@@ -87,7 +87,7 @@ export default {
         const pwHash = sjcl.codec.hex.fromBits(pwBitArray);
         this.password = "";
         let sessionId = await this.$http.post(serverURL + "/admin.php", {}, pwHash);
-        document.cookie = `gja=${sessionId}; expires=${this.getFutureTimestamp(3)}`;
+        document.cookie = `gja=${sessionId}; expires=${this.getFutureTimestamp(3)}; path=/`;
         this.isAdmin = true;
         this.loadTeams();
       } catch (err) { 
@@ -103,7 +103,7 @@ export default {
     },
 
     logout() {
-      document.cookie = "gja=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie = "gja=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
       this.$router.push({ name: 'Home'});
       this.$emit('toast', "Signed out.");
     },
@@ -153,6 +153,12 @@ export default {
 
 a {
   cursor: pointer;
+}
+
+.content {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 0 50px;
 }
 
 </style>
