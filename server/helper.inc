@@ -1,4 +1,5 @@
 <?php
+include_once("./constants.inc");
 
 function die_JSON($arr) {
   header('Content-Type: application/json');
@@ -11,7 +12,8 @@ function die_error($err) {
 }
 
 function get_db_connection() {
-  $conn = new PDO('sqlite:./sql/current.db');
+  global $sqlDataSourceName;
+  $conn = new PDO($sqlDataSourceName);
   return $conn;
 }
 
@@ -43,7 +45,7 @@ function get_login_team($conn, $teamId, $secret) {
 }
 
 function send_team_email($email, $teamName, $teamId, $secret) {
-  $loginURL = "http/localhost:8080/login";
+  $loginURL = "http://cse.taylor.edu/~gamejamdev/#/login";
   $msg = "You've been added to team: ".$teamName."! Click this link to sign in! ".$loginURL."?t=".$teamId."&s=".$secret;
   $msg = wordwrap($msg, 70);
   mail($email, "TU GameJam Team Confirmation", $msg);

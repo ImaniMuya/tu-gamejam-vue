@@ -1,5 +1,6 @@
 <?php
-header('Access-Control-Allow-Origin: http://localhost:8080'); //TODO: make constants file
+include_once("./constants.inc");
+header("Access-Control-Allow-Origin: $clientOrigin");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 header('Access-Control-Allow-Credentials: true');
@@ -52,10 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   }
   mkdir("./files/");
 
-  if (!copy("./sql/current.db", "./past/$event/data.db")) { //maybe unnecessary (already have json)
-    http_response_code(500);
-    die("Failed while moving db.");
-  }
+  // if (!copy("./sql/current.db", "./past/$event/data.db")) { //maybe unnecessary (already have json)
+  //   http_response_code(500);
+  //   die("Failed while moving db.");
+  // }
 
   //reset db
   $query = file_get_contents("./sql/reset-db.sql");
