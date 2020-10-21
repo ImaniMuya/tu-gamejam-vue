@@ -24,7 +24,7 @@ sqlite3 current.db
 sqlite> .read ./public_html/server/sql/create-db.sql
 ```
 
-## Devlopment
+## Development
 pushing to subtrees:
 ```
 git subtree push --prefix client/dist origin frontend
