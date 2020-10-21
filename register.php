@@ -83,7 +83,7 @@ if (!$sql->execute()) {
   // TODO: delete team here?
 }
 
-// send_team_email($body->email, $body->teamName, $teamId, $secret);
+send_team_email($body->email, $body->teamName, $teamId, $secret);
 
 http_response_code(201);
 die("Team Created: $body->teamName.");
