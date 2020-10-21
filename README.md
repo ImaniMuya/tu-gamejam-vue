@@ -11,6 +11,10 @@ cp -r * ../public_html/.
 ```
 cd ../public_html/
 git clone --single-branch --branch backend https://github.com/ImaniMuya/tu-gamejam-vue.git server
+cd server
+mkdir past
+mkdir files
+mkdir files/gallery
 ```
 ### database
 check `server/constants.inc` for sqlite db location and `cd` there.
