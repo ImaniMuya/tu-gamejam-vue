@@ -8,7 +8,7 @@
   <div v-else>
     <page-header>Admin</page-header>
     <div class="content">
-      <a @click="logout">Logout</a>
+      <a @click="logout">Logout (Admin)</a>
       <h2>Schedule</h2>
 
       <h2>Theme Editor</h2>

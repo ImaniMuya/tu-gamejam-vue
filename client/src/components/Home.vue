@@ -2,8 +2,12 @@
   <div>
     <!-- <timeline /> -->
     <page-header>CSE GameJam</page-header>
-    <div><router-link :to="'/register'">register</router-link></div>
-    <event 
+    <template v-if="$teamCookieExists">
+      <div><router-link :to="'/team'">my team</router-link></div>
+      <div><router-link :to="'/submission'">our submission</router-link></div>
+    </template>
+    <div v-else><router-link :to="'/register'">register</router-link></div>
+    <event
       @toast="$emit('toast', $event)"
       @warn="$emit('warn', $event)"
       :submissions="submissions"
@@ -37,6 +41,12 @@ export default {
     this.getEventData();
   },
   methods: {
+    // logout() {
+    //   if (!this.$teamCookieExists) return;
+    //   document.cookie = "gja=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+    //   document.cookie = "gja=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+    // },
+
     getEventData() {
       this.loading = true;
       this.$http.get(serverURL+"/event.php")
