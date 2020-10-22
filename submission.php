@@ -1,7 +1,7 @@
 <?php
 include_once("./constants.inc");
 header("Access-Control-Allow-Origin: $clientOrigin");
-header("Access-Control-Allow-Methods: GET, POST");
+header("Access-Control-Allow-Methods: GET, POST, DELETE");
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 header('Access-Control-Allow-Credentials: true');
 
@@ -84,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $target_file = get_submission_file_path($team["team_id"], $qid, $basename);
     if (!move_uploaded_file($file["tmp_name"], $target_file)) {
       http_response_code(500);
+      $tmpfile = $file["tmp_name"];
+      if (!$tmpfile) die("Failed while uploading file. Your file may be too large.");
       die("Failed while uploading file.");
     }
 
@@ -114,6 +116,36 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   }
   http_response_code(201);
   die("Submission Updated.");
+}
+
+// DELETE - only for removing files and images
+if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
+  $qid = $_GET["qid"];
+
+  //delete file
+  $sql = $conn->prepare("SELECT answer FROM subm_answers 
+    WHERE question_id=:question_id AND team_id=:team_id");
+  $sql->bindValue(':question_id', $qid);
+  $sql->bindValue(':team_id', $team["team_id"]);
+  $sql->execute();
+  $result = $sql->fetch(PDO::FETCH_ASSOC);
+  if ($result) {
+    $oldFile = get_submission_file_path($team["team_id"], $qid, $result["answer"]);
+    unlink($oldFile);
+  }
+
+  //update database
+  $sql = $conn->prepare("DELETE FROM subm_answers
+    WHERE question_id=:question_id AND team_id=:team_id");
+  $sql->bindValue(':question_id', $qid);
+  $sql->bindValue(':team_id', $team["team_id"]);
+  if (!$sql->execute()) {
+    http_response_code(500);
+    die("Error updating database.");
+  }
+
+  http_response_code(200);
+  die("File Removed.");
 }
 
 ?>
