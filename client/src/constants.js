@@ -1,3 +1,3 @@
-// export const serverURL = "http://localhost:4321";
-export const serverURL = "https://cse.taylor.edu/~gamejamdev/server";
+export const serverURL = "//cse.taylor.edu/~gamejamdev/server";
+// export const serverURL = "//localhost:4321";
 export const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
