@@ -113,7 +113,7 @@ export default {
     },
 
     remove(person) {
-      if (!confirm(`Remove ${person.name} from ${this.team}?`)) return;
+      if (!confirm(`Remove ${person.name} from ${this.team.name}?`)) return;
       const id = person.id;
       person.deleting = true;
       this.$http.delete(serverURL + "/team.php?id=" + id, {credentials: "include"})

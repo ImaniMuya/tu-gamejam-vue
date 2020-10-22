@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
   }
   http_response_code(201);
   
-  // send_team_email($body->email, $team["name"], $team["team_id"], $secret);
+  send_team_email($body->email, $team["name"], $team["team_id"], $secret);
   
   die_JSON(array(
     "person_id" => $conn->lastInsertId(),
