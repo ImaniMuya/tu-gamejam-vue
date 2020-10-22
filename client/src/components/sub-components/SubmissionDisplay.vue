@@ -96,7 +96,7 @@ export default {
   margin: 20px;
   gap: 10px 10px;
   width: 500px;
-  align-self: stretch;
+  /* align-self: stretch; */
 }
 
 .grid > div {

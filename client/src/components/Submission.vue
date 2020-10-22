@@ -1,22 +1,25 @@
 <template>
-  <div>
+  <div class="submission-outer">
     <!-- <timeline /> -->
     <page-header :msg="team.name">Submit Your Game!</page-header>
     <loader v-if="loading" id="page-loader" :circlesNum="5"/>
     <template v-else>
       <form class="grid" @submit.prevent ref="form">
-        <template v-for="field of submission">
-          <label class="label" :for="field.id" :key="field.id + 'label'">{{ field.label }}</label>
+        <template v-for="(field, id) of submission">
+          <label class="label" :for="id" :key="id + 'label'">{{ field.label }}</label>
           <submission-input
-            :key="field.id"
-            :name="field.id"
+            :key="id"
+            :name="id"
             :type="field.type"
             :placeholder="field.placeholder"
             :teamId="team.id"
             :disabled="submitting"
-            :imgPristine="field.imgPristine"
-            @imgDirty="field.imgPristine = false"
+            :pristine="field.pristine"
+            @dirty="field.pristine = false"
+            @clean="field.pristine = true"
+            :origValue="field.origValue"
             v-model="field.value"
+            @deleteAnswer="deleteAnswer(id)"
           />
         </template>
       </form>
@@ -41,35 +44,40 @@ export default {
     return {
       loading: false,
       submitting: false,
-      submission: [],
+      submission: {},
     }
-  },  
+  },
   mounted() {
     if (!this.$teamCookieExists) {
       this.$emit("warn", "You need to login first.")
       this.$router.push({ name: 'Home'});
       return;
     }
-    this.loading = true;
-    this.$http.get(serverURL+"/submission.php", {credentials: "include"})
-    .then(fields => {
-      fields.forEach(dbSubmissionField => {
-        this.submission.push(this.createSubmissionField(dbSubmissionField));
-      });
-    })
-    .catch(err => this.$emit("warn", err))
-    .finally(() => this.loading = false);
+    this.loadSubmission();
   },
 
   methods: {
+    loadSubmission() {
+      this.submission = {};
+      this.loading = true;
+      this.$http.get(serverURL+"/submission.php", {credentials: "include"})
+      .then(fields => {
+        fields.forEach(dbSubmissionField => {
+          let id = dbSubmissionField.question_id
+          this.$set(this.submission, id, this.createSubmissionField(dbSubmissionField));
+        });
+      })
+      .catch(err => this.$emit("warn", err))
+      .finally(() => this.loading = false);
+    },
     createSubmissionField(dbSubmissionField) {
       return {
-        id: dbSubmissionField.question_id,
         type: dbSubmissionField.category_name,
         label: dbSubmissionField.question,
         value: dbSubmissionField.answer,
+        origValue: dbSubmissionField.answer,
         placeholder: dbSubmissionField.placeholder,
-        imgPristine: true
+        pristine: true
       };
     },
     submit() {
@@ -78,8 +86,20 @@ export default {
       this.$http.post(serverURL + "/submission.php", {credentials: "include"}, formData)
       .then(text => {
         this.$emit("toast", text);
-        this.submission.forEach(x => x.imgPristine = true)
       })
+      .then(this.loadSubmission) //TODO: optimize this out later
+      .catch(err => this.$emit("warn", err))
+      .finally(() => this.submitting = false)
+    },
+    deleteAnswer(questionId) {
+      //TODO: check for original to avoid making extra calls
+      // (note: reactivity is kinda wrong after submit)
+      let field = this.submission[questionId];
+      if (!field.origValue) return;
+      this.submitting = true;
+      this.$http.delete(serverURL + "/submission.php?qid="+questionId, {credentials: "include"})
+      .then(this.loadSubmission) //TODO: optimize this out later
+      .then(text => this.$emit("toast", text))
       .catch(err => this.$emit("warn", err))
       .finally(() => this.submitting = false)
     }
@@ -115,6 +135,10 @@ export default {
 
 #submit-loader {
   margin: 20px auto;
+}
+
+.submission-outer {
+  margin-bottom: 100px;
 }
 
 </style>
