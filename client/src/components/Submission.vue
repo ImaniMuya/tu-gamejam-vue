@@ -98,8 +98,8 @@ export default {
       if (!field.origValue) return;
       this.submitting = true;
       this.$http.delete(serverURL + "/submission.php?qid="+questionId, {credentials: "include"})
-      .then(this.loadSubmission) //TODO: optimize this out later
       .then(text => this.$emit("toast", text))
+      .then(this.loadSubmission) //TODO: optimize this out later
       .catch(err => this.$emit("warn", err))
       .finally(() => this.submitting = false)
     }
