@@ -154,6 +154,18 @@ export default {
       .catch(err => this.$emit("warn", err))
       .finally(() => this.addingAward = false);
     },
+    deleteAward(award) {
+      if (!confirm(`Remove ${award.name}?`)) return;
+      award.deleting = true;
+      this.$http.delete(serverURL + "/award.php?id=" + award.id, {credentials: "include"})
+      .then(text => {
+        this.$emit("toast", text);
+        this.awards = this.awards.filter(x => x.id != award.id);
+      })
+      .catch(err => this.$emit("warn", err))
+      .finally(() => award.deleting = false)
+
+    }
   }
 }
 </script>
