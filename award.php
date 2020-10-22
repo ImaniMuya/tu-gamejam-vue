@@ -72,4 +72,17 @@ if ($_SERVER['REQUEST_METHOD'] == "PUT") {
   ));
 }
 
+// DELETE
+if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
+  $sql = $conn->prepare("DELETE FROM awards WHERE award_id = :award_id");
+  $sql->bindValue(':award_id', $_GET["id"]);
+  if (!$sql->execute()) {
+    http_response_code(500);
+    die("Failed while deleting award.");
+  }
+
+  http_response_code(200);
+  die("Deleted Award.");
+}
+
 ?>
